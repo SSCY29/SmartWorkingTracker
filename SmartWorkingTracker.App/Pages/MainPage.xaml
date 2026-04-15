@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartWorkingTracker.App.Pages.MainPage"
+             xmlns:converters="clr-namespace:SmartWorkingTracker.App.Converters">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20"
+                             Spacing="16">
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                   IsVisible="{Binding IsBusy}"
+                   HorizontalOptions="Center" />
+
+
+
+            <!-- Titolo -->
+            <Label Text="Smart Working Tracker"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" />
+
+            <!-- Mese selezionato -->
+            <Label Text="{Binding SelectedDateDisplay}"
+                       FontSize="18"
+                       HorizontalOptions="Center" />
+
+            <!-- Pulsante ricarica -->
+            <Button Text="Aggiorna riepilogo"
+                        Command="{Binding LoadCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+
+
+            <!-- Riepilogo -->
+            <Border>
+                <VerticalStackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
+
+                    <Label Text="Totali" FontAttributes="Bold" />
+                    <Label Text="{Binding CurrentWeekTotalWorkingHours, StringFormat='Ore settimanali: {0}'}" />
+                    <Label Text="{Binding CurrentMonthTotalWorkingHours, StringFormat='Ore mensili: {0}'}" />                    
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Border>
+                <VerticalStackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
+                    <Label Text="Presenze" FontAttributes="Bold" />
+                    <Label Text="{Binding CurrentWeekPresenceWorkingHours, StringFormat='Ore settimanali in presenza: {0}'}" />
+                    <Label Text="{Binding CurrentMonthPresenceWorkingHours, StringFormat='Ore mensili in presenza: {0}'}" />
+
+                </VerticalStackLayout>
+
+            </Border>
+            <Border>
+                <VerticalStackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
+                    <Label Text="Smart Working" FontAttributes="Bold" />
+                    <Label Text="{Binding CurrentWeekSmartWorkingHours, StringFormat='Ore settimanali in telelavoro: {0}'}" />
+                    <Label Text="{Binding CurrentMonthSmartWorkingHours, StringFormat='Ore mensili in telelavoro: {0}'}" />
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- Avviso limite -->
+            <Label Text="⚠️ Limite di smart working settimanale superato"
+                       TextColor="Red"
+                       FontAttributes="Bold"
+                       IsVisible="{Binding IsWeeklySmartWorkingLimitExceeded}" />
+
+            <Label Text="⚠️ Limite di smart working mensile superato"
+                       TextColor="Red"
+                       FontAttributes="Bold"
+                       IsVisible="{Binding IsMonthlySmartWorkingLimitExceeded}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
