@@ -12,5 +12,8 @@ namespace SmartWorkingTracker.Core.Models
         public double MonthlyHoursLimit { get; set; }
         public double YearlyHoursLimit { get; set; }
         public ContractType ContractType { get; set; } = 0;
+
+        // ore di lavoro giornaliere
+        // giorni di lavoro da contratto
     }
 }

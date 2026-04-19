@@ -4,6 +4,7 @@ using SmartWorkingTracker.Core.Models;
 using SmartWorkingTracker.Core.Services;
 using SmartWorkingTracker.Data.Database;
 using SmartWorkingTracker.Data.Entities;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace SmartWorkingTracker.App.ViewModel
@@ -27,7 +28,9 @@ namespace SmartWorkingTracker.App.ViewModel
             SelectedDate = new DateTime(
                 DateTime.Today.Year,
                 DateTime.Today.Month,
-                1);
+                DateTime.Today.Day);
+
+            
 
             LoadCommand = new Command(async () => await LoadAsync());
         }
@@ -72,7 +75,10 @@ namespace SmartWorkingTracker.App.ViewModel
         [ObservableProperty]
         private double _currentMonthSmartWorkingHours;
 
+        [ObservableProperty]
+        private bool _hasSessions;
         
+        public ObservableCollection<CalendarDayViewModel> CalendarDays { get; set; } = new ObservableCollection<CalendarDayViewModel>();
 
         public string SelectedDateDisplay => SelectedDate.ToString("dd MMMM yyyy");
 
@@ -95,8 +101,10 @@ namespace SmartWorkingTracker.App.ViewModel
             try
             {
                 IsBusy = true;
-                
+
                 await _database.InitializeAsync();
+
+                WorkSessions = new List<WorkSession>();
 
                 // 1️ Caricamento Sessioni e contratto
                 foreach (WorkSessionEntity ent in await _workSessionsService.GetSessionByMonthAsync(SelectedDate.Year, SelectedDate.Month))
@@ -111,7 +119,7 @@ namespace SmartWorkingTracker.App.ViewModel
                     };
                     WorkSessions.Add(session);
                 }
-                
+
 
                 WorkContractEntity workContractEntity = await _workContractsService.GetContractByYearAsync(SelectedDate.Year);
 
@@ -133,7 +141,7 @@ namespace SmartWorkingTracker.App.ViewModel
                         Year = DateTime.Today.Year,
                         WeeklyHoursLimit = 16,
                         MonthlyHoursLimit = 64,
-                        YearlyHoursLimit = 120,
+                        YearlyHoursLimit = 120 * 8,
                         ContractType = ContractType.FullTime
                     };
                 }
@@ -141,7 +149,8 @@ namespace SmartWorkingTracker.App.ViewModel
                 // 2️ Calcolo riepilogo
                 double currentWeekNumber = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(SelectedDate, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 
-                if (WorkSessions != null)
+                HasSessions = false;
+                if (WorkSessions != null && WorkSessions.Count > 0)
                 {
                     CurrentWeekTotalWorkingHours = WorkSessions.Where(x => x.Week == currentWeekNumber).Sum(x => (x.To - x.From).TotalHours);
                     CurrentMonthTotalWorkingHours = WorkSessions.Where(x => x.From.Month == SelectedDate.Month).Sum(x => (x.To - x.From).TotalHours);
@@ -154,14 +163,68 @@ namespace SmartWorkingTracker.App.ViewModel
 
                     IsWeeklySmartWorkingLimitExceeded = CurrentWeekSmartWorkingHours > Contract.WeeklyHoursLimit;
                     IsMonthlySmartWorkingLimitExceeded = CurrentMonthSmartWorkingHours > Contract.MonthlyHoursLimit;
+
+                    HasSessions = true;
                 }
+
+                BuildCalendar();
+            }
+            catch (Exception ex)
+            {
+                
             }
             finally
             {
                 IsBusy = false;
             }
         }
+
+        partial void OnSelectedDateChanged(DateTime oldValue, DateTime newValue)
+        {
+            if (LoadCommand != null)
+                LoadCommand.Execute(null);
+
+        }
+
+        private void BuildCalendar()
+        {
+            CalendarDays.Clear();
+
+            // 1️⃣ Primo giorno del mese selezionato
+            var firstDayOfMonth =
+                new DateTime(SelectedDate.Year, SelectedDate.Month, 1);
+
+            // 2️⃣ Troviamo il LUNEDÌ della settimana che contiene il 1° del mese
+            int diff = firstDayOfMonth.DayOfWeek == DayOfWeek.Sunday
+                ? 6
+                : (int)firstDayOfMonth.DayOfWeek - 1;
+
+            var calendarStart = firstDayOfMonth.AddDays(-diff);
+
+            // 3️⃣ Costruiamo 42 giorni (6 settimane)
+            for (int i = 0; i < 42; i++)
+            {
+                var date = calendarStart.AddDays(i);
+
+                var sessionsForDay = WorkSessions
+                    .Where(s => s.From.Date == date.Date)
+                    .ToList();
+
+                CalendarDayViewModel cvm = new CalendarDayViewModel();
+
+                cvm.Index = i;
+                cvm.Date = date;
+                cvm.HasPresence = sessionsForDay.Any(
+                    s => s.SessionType == SessionType.Presence);
+                cvm.HasSmartWorking = sessionsForDay.Any(
+                    s => s.SessionType == SessionType.SmartWorking);
+                cvm.IsCurrentMonth = SelectedDate.Date.Month == date.Month;
+
+                CalendarDays.Add(cvm);
+            }
+            
+        }
+
+
     }
-
-
 }

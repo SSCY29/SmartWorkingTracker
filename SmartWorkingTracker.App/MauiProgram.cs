@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microcharts;
 using SmartWorkingTracker.App.ViewModel;
 using SmartWorkingTracker.Core.Services;
 using SmartWorkingTracker.Data.Database;
 using SQLitePCL;
+using Microcharts.Maui;
 
 namespace SmartWorkingTracker.App
 {
@@ -19,10 +21,10 @@ namespace SmartWorkingTracker.App
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+                }).UseMicrocharts();                
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             builder.Services.AddSingleton<AppDatabase>(sp =>
@@ -43,7 +45,9 @@ namespace SmartWorkingTracker.App
             // VIEWMODELS
             // ============================
             builder.Services.AddSingleton<MainViewModel>();
-
+            builder.Services.AddSingleton<WorkSessionEditorViewModel>();
+            builder.Services.AddSingleton<StatisticsViewModel>();
+            builder.Services.AddSingleton<ReportViewModel>();
 
             var app = builder.Build();
             

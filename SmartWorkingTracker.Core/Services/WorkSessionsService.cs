@@ -44,9 +44,9 @@ namespace SmartWorkingTracker.Core.Services
                             .ToListAsync();
         }
 
-        public Task InsertOrUpdateAsync(WorkSessionEntity entity)
+        public Task InsertAsync(WorkSessionEntity entity)
         {
-            return _database.InsertOrReplaceAsync(entity);
+            return _database.InsertAsync(entity);
             
         }
     }
