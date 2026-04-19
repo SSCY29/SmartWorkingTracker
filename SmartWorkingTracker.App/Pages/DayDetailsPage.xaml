@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartWorkingTracker.App.Pages.DayDetailsPage"
+             Title="Dettaglio giornata">
+    <VerticalStackLayout Padding="16" Spacing="12">
+
+        <Label
+            Text="{Binding SelectedDate,
+                StringFormat='Sessioni del {0:dd MMMM yyyy}'}"
+            FontSize="18"
+            FontAttributes="Bold"
+            HorizontalOptions="Center" />
+
+        <CollectionView
+            ItemsSource="{Binding Sessions}"
+            SelectionMode="Single"
+            SelectionChanged="OnSessionSelected">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="12" Stroke="LightGray">
+                        <VerticalStackLayout Spacing="4">
+
+                            <Label
+                                Text="{Binding SessionType}"
+                                FontAttributes="Bold" />
+
+                            <Label
+                                Text="{Binding From,
+                                    StringFormat='Da {0:HH:mm}'}" />
+                            <Label
+                                Text="{Binding To,
+                                    StringFormat='A {0:HH:mm}'}" />
+
+                            <Label
+                                Text="{Binding Notes}"
+                                FontAttributes="Italic"
+                                IsVisible="{Binding Notes,
+                                    Converter={StaticResource StringNotEmptyConverter}}" />
+
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </VerticalStackLayout>
+</ContentPage>

@@ -67,7 +67,8 @@ namespace SmartWorkingTracker.App.ViewModel
             return new BarChart
             {
                 Entries = entries,
-                LabelTextSize = 32
+                LabelOrientation = Orientation.Horizontal,
+                
             };
         }
     }

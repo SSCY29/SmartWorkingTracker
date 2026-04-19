@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using SmartWorkingTracker.Data.Database;
+﻿using SmartWorkingTracker.App.Pages;
 
 namespace SmartWorkingTracker.App
 {
@@ -7,7 +6,10 @@ namespace SmartWorkingTracker.App
     {
         public App()
         {
-            InitializeComponent();            
+            InitializeComponent();
+
+            Routing.RegisterRoute(nameof(DayDetailsPage), typeof(DayDetailsPage));
+            Routing.RegisterRoute(nameof(EditSessionPage), typeof(EditSessionPage));
         }
 
         protected override Window CreateWindow(IActivationState? activationState)

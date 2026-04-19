@@ -36,7 +36,8 @@
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
 
             <CollectionView ItemsSource="{Binding CalendarDays}"
-                            SelectionMode="None">
+                            SelectionMode="Single"
+                            SelectionChanged="OnCalendarSelectionChanged">
 
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Vertical" Span="7" />

@@ -48,6 +48,8 @@ namespace SmartWorkingTracker.App
             builder.Services.AddSingleton<WorkSessionEditorViewModel>();
             builder.Services.AddSingleton<StatisticsViewModel>();
             builder.Services.AddSingleton<ReportViewModel>();
+            builder.Services.AddSingleton<DayDetailsViewModel>();
+            builder.Services.AddSingleton<EditSessionViewModel>();
 
             var app = builder.Build();
             

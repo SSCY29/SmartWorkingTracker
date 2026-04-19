@@ -150,6 +150,13 @@ namespace SmartWorkingTracker.App.ViewModel
                 double currentWeekNumber = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(SelectedDate, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 
                 HasSessions = false;
+
+                CurrentWeekTotalWorkingHours = CurrentMonthTotalWorkingHours =
+                    CurrentWeekPresenceWorkingHours = CurrentMonthPresenceWorkingHours =
+                    CurrentWeekSmartWorkingHours = CurrentMonthSmartWorkingHours = 0;
+
+                IsWeeklySmartWorkingLimitExceeded = IsMonthlySmartWorkingLimitExceeded = false;
+
                 if (WorkSessions != null && WorkSessions.Count > 0)
                 {
                     CurrentWeekTotalWorkingHours = WorkSessions.Where(x => x.Week == currentWeekNumber).Sum(x => (x.To - x.From).TotalHours);

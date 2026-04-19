@@ -1,9 +1,8 @@
-﻿using SmartWorkingTracker.Data.Database;
+﻿using SmartWorkingTracker.Core.Models;
+using SmartWorkingTracker.Data.Database;
 using SmartWorkingTracker.Data.Entities;
 using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SmartWorkingTracker.Core.Services
 {
@@ -22,9 +21,12 @@ namespace SmartWorkingTracker.Core.Services
 
         public Task<List<WorkSessionEntity>> GetSessionByDateAsync(DateTime date)
         {
+            var from = date;
+            var to = from.AddDays(1);
+
             return _database.Table<WorkSessionEntity>()
-                            .Where(i => i.From >= date && i.To <= date)
-                            .ToListAsync();
+                .Where(x => x.From >= from && x.From < to)
+                .ToListAsync();
         }
         public Task<List<WorkSessionEntity>> GetSessionByMonthAsync(int year, int month)
         {
@@ -49,5 +51,17 @@ namespace SmartWorkingTracker.Core.Services
             return _database.InsertAsync(entity);
             
         }
+
+        public Task UpdateAsync(WorkSessionEntity session)
+                => _database.UpdateAsync(session);
+
+        public Task DeleteAsync(int sessionId)
+                => _database.Table<WorkSessionEntity>().DeleteAsync(x => x.Id == sessionId);
+
+
+        public Task<WorkSessionEntity> GetByIdAsync(int sessionId)
+                => _database.Table<WorkSessionEntity>().FirstOrDefaultAsync(x => x.Id == sessionId);
+
+
     }
 }

@@ -22,4 +22,19 @@ public partial class MainPage : ContentPage
         }
     }
 
+
+    private async void OnCalendarSelectionChanged(
+        object sender,
+        SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.FirstOrDefault() is CalendarDayViewModel day)
+        {
+            await Shell.Current.GoToAsync(
+                $"{nameof(DayDetailsPage)}?date={day.Date:yyyy-MM-dd}");
+
+            ((CollectionView)sender).SelectedItem = null;
+        }
+    }
+
+
 }
