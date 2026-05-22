@@ -1,4 +1,4 @@
-﻿using SmartWorkingTracker.Data.Entities;
+﻿using SmartWorkingTracker.Core.Models;
 using SQLite;
 
 namespace SmartWorkingTracker.Data.Database
@@ -34,10 +34,16 @@ namespace SmartWorkingTracker.Data.Database
             await _initLock.WaitAsync();
             try
             {
-                //await _database.ExecuteAsync("PRAGMA foreign_keys = ON;");
 
-                await _database.CreateTableAsync<WorkSessionEntity>();
-                await _database.CreateTableAsync<WorkContractEntity>();
+                await _database.CreateTableAsync<WorkSession>();
+                await _database.CreateTableAsync<Contract>();
+                await _database.CreateTableAsync<Settings>();
+
+                // Indice unico per anno contratto
+                await _database.ExecuteAsync(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS idx_contract_year ON Contract(Year)"
+                );
+
             }
             finally
             {

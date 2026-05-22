@@ -7,35 +7,10 @@
     xmlns:pages="clr-namespace:SmartWorkingTracker.App.Pages"
     Title="Smart Working Tracker">
 
-    <!-- DASHBOARD -->
-    <ShellItem Title="Dashboard" Route="dashboard">
+    <ShellItem Route="home" Title="Home Page">
         <ShellContent
-            Title="Riepilogo"
-            Icon="dashboard.png"
+            Title="Home Page"
             ContentTemplate="{DataTemplate pages:MainPage}" />
-    </ShellItem>
-
-    <!-- GESTIONE -->
-    <ShellItem Title="Gestione" Route="management">
-        <ShellContent
-            Title="Aggiungi sessione"
-            Icon="add.png"
-            ContentTemplate="{DataTemplate pages:WorkSessionEditorPage}" />
-    </ShellItem>
-
-    <!-- ANALISI -->
-    <ShellItem Title="Statistiche" Route="statistics">
-        <ShellContent
-            Title="Statistiche"
-            Icon="chart.png"
-            ContentTemplate="{DataTemplate pages:StatisticsPage}" />
-    </ShellItem>
-
-    <ShellItem Title="Report" Route="report">
-        <ShellContent
-            Title="Report"
-            Icon="report.png"
-            ContentTemplate="{DataTemplate pages:ReportPage}" />
     </ShellItem>
 
 </Shell>

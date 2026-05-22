@@ -7,9 +7,9 @@ namespace SmartWorkingTracker.Core.Enums
 
     public enum SessionType
     {
-        Presence = 0,
+        Presenza = 0,
         SmartWorking = 1,
-        NotWorking = 2
+        NonPresente = 2
     }
 
 }

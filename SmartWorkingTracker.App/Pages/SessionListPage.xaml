@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartWorkingTracker.App.Pages.SessionListPage"
+             xmlns:Models="clr-namespace:SmartWorkingTracker.Core.Models;assembly=SmartWorkingTracker.Core"
+             Title="Lista Sessioni">
+
+
+    <VerticalStackLayout Padding="10" Spacing="10">
+
+        <!-- HEADER -->
+        <Label Text="{Binding Date, StringFormat='Sessioni del {0:dd/MM/yyyy}'}"
+               FontSize="18"
+               FontAttributes="Bold"
+               HorizontalOptions="Center" />
+
+        <!-- ADD BUTTON -->
+        <Button Text="➕ Nuova sessione"
+                Clicked="OnAddClicked" />
+
+        <!-- LISTA SESSIONI -->
+        <CollectionView ItemsSource="{Binding Sessions}">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="Models:WorkSession">
+
+                    <Border Padding="10"
+                            Margin="5"
+                            Stroke="Gray"
+                            StrokeThickness="1">
+
+                        <VerticalStackLayout Spacing="5">
+
+                            <Label Text="{Binding Type}"
+                                   FontAttributes="Bold" />
+
+                            <Label Text="{Binding StartDate, StringFormat='Inizio: {0:HH:mm}'}" />
+                            <Label Text="{Binding EndDate, StringFormat='Fine: {0:HH:mm}'}" />
+
+                            <HorizontalStackLayout Spacing="10">
+
+                                <Button Text="Modifica"
+                                        Clicked="OnEditClicked"
+                                        CommandParameter="{Binding}" />
+
+                                <Button Text="Elimina"
+                                        Clicked="OnDeleteClicked"
+                                        CommandParameter="{Binding}" />
+
+                            </HorizontalStackLayout>
+
+                        </VerticalStackLayout>
+
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+
+</ContentPage>

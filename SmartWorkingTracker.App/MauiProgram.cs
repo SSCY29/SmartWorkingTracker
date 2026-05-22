@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Microcharts;
-using SmartWorkingTracker.App.ViewModel;
-using SmartWorkingTracker.Core.Services;
+﻿using Microcharts.Maui;
+using Microsoft.Extensions.Logging;
+using SmartWorkingTracker.App.ViewModels;
 using SmartWorkingTracker.Data.Database;
+using SmartWorkingTracker.Data.Services;
 using SQLitePCL;
-using Microcharts.Maui;
 
 namespace SmartWorkingTracker.App
 {
@@ -38,17 +37,15 @@ namespace SmartWorkingTracker.App
             // ============================
             // SERVICES
             // ============================
-            builder.Services.AddSingleton<WorkContractsService>();
-            builder.Services.AddSingleton<WorkSessionsService>();
+            builder.Services.AddSingleton<DatabaseService>();
+
 
             // ============================
             // VIEWMODELS
             // ============================
-            builder.Services.AddSingleton<MainViewModel>();
-            builder.Services.AddSingleton<WorkSessionEditorViewModel>();
-            builder.Services.AddSingleton<StatisticsViewModel>();
-            builder.Services.AddSingleton<ReportViewModel>();
-            builder.Services.AddSingleton<DayDetailsViewModel>();
+            builder.Services.AddSingleton<DayViewModel>();
+            builder.Services.AddSingleton<HomeViewModel>();
+            builder.Services.AddSingleton<SessionListViewModel>();
             builder.Services.AddSingleton<EditSessionViewModel>();
 
             var app = builder.Build();

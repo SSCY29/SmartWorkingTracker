@@ -8,8 +8,6 @@ namespace SmartWorkingTracker.App
         {
             InitializeComponent();
 
-            Routing.RegisterRoute(nameof(DayDetailsPage), typeof(DayDetailsPage));
-            Routing.RegisterRoute(nameof(EditSessionPage), typeof(EditSessionPage));
         }
 
         protected override Window CreateWindow(IActivationState? activationState)

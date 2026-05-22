@@ -2,44 +2,38 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SmartWorkingTracker.App.Pages.EditSessionPage"
-             xmlns:converters="clr-namespace:SmartWorkingTracker.App.Converters"
-             Title="Edit Session">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
-    <VerticalStackLayout Padding="20" Spacing="12">
+             Title="Sessione">
 
-        <Label Text="Tipo sessione" FontAttributes="Bold" />
-        <Picker ItemsSource="{Binding SessionTypes}"
-                SelectedItem="{Binding SessionType}" />
 
-        <Label Text="Data" />
-        <DatePicker Date="{Binding Day}" />
-        
-        <Label Text="Inizio" />        
+    <VerticalStackLayout Padding="20" Spacing="10">
+
+        <!-- ORA INIZIO -->
+        <Label Text="Ora iniziale" />
         <TimePicker Time="{Binding StartTime}" />
 
-        <Label Text="Fine" />        
+        <!-- ORA FINE -->
+        <Label Text="Ora fine" />
         <TimePicker Time="{Binding EndTime}" />
 
+        <!-- TIPO -->
+        <Label Text="Tipo sessione" />
+        <Picker SelectedIndex="{Binding TypeIndex}">
+            <Picker.Items>
+                <x:String>Presenza</x:String>
+                <x:String>SmartWorking</x:String>
+                <x:String>NonPresente</x:String>
+            </Picker.Items>
+        </Picker>
+
+        <!-- NOTE -->
         <Label Text="Note" />
-        <Editor Text="{Binding Notes}" />
+        <Editor Text="{Binding Notes}" HeightRequest="80" />
 
-        <Button
-            Text="Salva modifiche"
-            Command="{Binding SaveCommand}"
-            IsEnabled="{Binding IsBusy,
-                Converter={StaticResource InverseBoolConverter}}" />
-
-        <Button
-            Text="Elimina sessione"
-            BackgroundColor="DarkRed"
-            TextColor="White"
-            Command="{Binding DeleteCommand}"
-            IsEnabled="{Binding IsBusy,
-                Converter={StaticResource InverseBoolConverter}}" />
+        <!-- SALVA -->
+        <Button Text="Salva"
+                Clicked="OnSaveClicked" />
 
     </VerticalStackLayout>
+
+
 </ContentPage>

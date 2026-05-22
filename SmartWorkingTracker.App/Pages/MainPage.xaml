@@ -2,135 +2,76 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SmartWorkingTracker.App.Pages.MainPage"
-             xmlns:converters="clr-namespace:SmartWorkingTracker.App.Converters"
-             xmlns:viewModels="clr-namespace:SmartWorkingTracker.App.ViewModel">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
-            <converters:DayTypeToColorConverter x:Key="DayTypeToColorConverter" />
-            <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
-            <converters:IndexToRowConverter x:Key="IndexToRowConverter" />
-            <converters:IndexToColumnConverter x:Key="IndexToColumnConverter" />
-
-            
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
+             xmlns:viewModels="clr-namespace:SmartWorkingTracker.App.ViewModels">
     <ScrollView>
-        <VerticalStackLayout Padding="20"
-                             Spacing="16">
-
-            <ActivityIndicator IsRunning="{Binding IsBusy}"
-                   IsVisible="{Binding IsBusy}"
-                   HorizontalOptions="Center" />
-
-            <!-- Mese selezionato -->
-            <DatePicker
-                Date="{Binding SelectedDate}" 
-                HorizontalOptions="Center" />
+        <VerticalStackLayout Padding="10">
+            <Label Text="Smart Working Tracker"
+               FontSize="20"
+               FontAttributes="Bold"
+               HorizontalOptions="Center" />
 
 
-            <!-- Pulsante ricarica -->
-            <Button Text="Aggiorna riepilogo"
-                        Command="{Binding LoadCommand}"
-                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+            <Grid ColumnDefinitions="Auto,*,Auto">
 
-            <CollectionView ItemsSource="{Binding CalendarDays}"
-                            SelectionMode="Single"
-                            SelectionChanged="OnCalendarSelectionChanged">
+                <Button Text="Precedente" 
+                        Clicked="OnPrevMonth" 
+                        Grid.Column="0" />
 
+                <Label Text="{Binding SelectedMonth}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"  
+                       Grid.Column="1"/>
+                
+                <Button Text="Successivo"
+                        Clicked="OnNextMonth"
+                        Grid.Column="2" />
+
+            </Grid>
+
+
+            <CollectionView ItemsSource="{Binding Days}">
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Vertical" Span="7" />
                 </CollectionView.ItemsLayout>
 
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="viewModels:CalendarDayViewModel">
-
-
-                        <Border Background="{Binding DayType,
-                            Converter={StaticResource DayTypeToColorConverter}}"
-                                Stroke="LightGray"
+                    <DataTemplate x:DataType="viewModels:DayViewModel">
+                        <Border Margin="3"
+                                Padding="5"
+                                BackgroundColor="{Binding Color}"
                                 StrokeThickness="1"
-                                Padding="4">
+                                Stroke="Gray">
+
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
 
 
-                            <Grid
-                                HeightRequest="44"
-                                WidthRequest="44"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center">
-                                <Label
-                                    Text="{Binding Date.Day}"
-                                    FontAttributes="Bold"
-                                    FontSize="14"
-                                    TextColor="Black"
-                                    HorizontalOptions="Center"
-                                    VerticalOptions="Center"
-                                    Opacity="{Binding IsCurrentMonth, Converter={StaticResource BoolToOpacityConverter}}" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer CommandParameter="{Binding Date}"
+                                                      Tapped="OnDayTapped" />
+                            </Border.GestureRecognizers>
+
+
+                            <Grid HeightRequest="50">
+
+                                <Label Text="{Binding Display}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Start" />
+
+                                <Label Text="{Binding Summary}"
+                                       FontSize="10"
+                                       HorizontalOptions="End"
+                                       VerticalOptions="End" />
                             </Grid>
+
+
                         </Border>
+
 
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
-
             </CollectionView>
-
-            <!-- RIEPILOGO SETTIMANA -->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <Border Grid.Column="0">
-                    <VerticalStackLayout>
-                        <Label Text="Settimana corrente"
-                               FontAttributes="Bold"
-                               FontSize="16"/>
-                        <Label Text="{Binding CurrentWeekTotalWorkingHours, StringFormat='Ore totali: {0:F1}'}"/>
-
-                        <Label Text="{Binding CurrentWeekPresenceWorkingHours, StringFormat='Presenza: {0:F1}'}"/>
-
-                        <Label Text="{Binding CurrentWeekSmartWorkingHours, StringFormat='Smart working: {0:F1}'}"/>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!-- RIEPILOGO MESE -->
-                <Border Grid.Column="1">
-                    <VerticalStackLayout>
-                        <Label Text="Mese corrente"
-                               FontAttributes="Bold"
-                               FontSize="16"/>
-
-                        <Label Text="{Binding CurrentMonthTotalWorkingHours, StringFormat='Ore totali: {0:F1}'}"/>
-
-                        <Label Text="{Binding CurrentMonthPresenceWorkingHours, StringFormat='Presenza: {0:F1}'}"/>
-
-                        <Label Text="{Binding CurrentMonthSmartWorkingHours, StringFormat='Smart working: {0:F1}'}"/>
-                    </VerticalStackLayout>
-                </Border>
-            </Grid>
-
-            <!-- Avviso limite -->
-
-            <Label Text="⚠️ Limite di smart working settimanale superato"
-                   TextColor="Red"
-                   FontAttributes="Bold"
-                   IsVisible="{Binding IsWeeklySmartWorkingLimitExceeded}" />
-
-            <Label Text="⚠️ Limite di smart working mensile superato"
-                   TextColor="Red"
-                   FontAttributes="Bold"
-                   IsVisible="{Binding IsMonthlySmartWorkingLimitExceeded}" />
-
-
-            <Label Text="Nessuna sessione registrata. Inizia aggiungendone una."
-                   IsVisible="{Binding HasSessions, Converter={StaticResource InverseBoolConverter}}"
-                   HorizontalOptions="Center"
-                   TextColor="Gray"
-                   FontAttributes="Italic" />
-
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>
