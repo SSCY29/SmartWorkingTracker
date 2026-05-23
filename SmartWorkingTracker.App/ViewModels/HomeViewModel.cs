@@ -11,9 +11,12 @@ namespace SmartWorkingTracker.App.ViewModels
         private readonly AppDatabase _db;
 
         public ObservableCollection<DayViewModel> Days { get; set; } = new();
+        public bool ContractMissing { get; set; }
 
         public int SelectedMonth { get; set; } = DateTime.Now.Month;
         public int SelectedYear { get; set; } = DateTime.Now.Year;
+
+        public string CurrentPeriod => $"{SelectedYear} - {GetMonth()}";
 
         public HomeViewModel(DatabaseService service, AppDatabase db)
         {
@@ -26,6 +29,11 @@ namespace SmartWorkingTracker.App.ViewModels
             Days.Clear();
 
             await _db.InitializeAsync();
+
+
+            var contract = await _service.GetContractByYear(SelectedYear);
+
+            ContractMissing = contract == null;
 
             var sessions = await _service.GetSessionsByMonth(SelectedYear, SelectedMonth);
 
@@ -62,6 +70,26 @@ namespace SmartWorkingTracker.App.ViewModels
                 });
             }
 
+        }
+
+        private string GetMonth()
+        {
+            switch (SelectedMonth)
+            {
+                case 1: return "Gennaio";
+                case 2: return "Febbraio";
+                case 3: return "Marzo";
+                case 4: return "Aprile";
+                case 5: return "Maggio";
+                case 6: return "Giugno";
+                case 7: return "Luglio";
+                case 8: return "Agosto";
+                case 9: return "Settembre";
+                case 10: return "Ottobre";
+                case 11: return "Novembre";
+                case 12: return "Dicembre";
+                default: return "";
+            }
         }
     }
 

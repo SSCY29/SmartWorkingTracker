@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartWorkingTracker.App.Pages.EditContractPage"
+             Title="Contratto">
+    <VerticalStackLayout Padding="20" Spacing="10">
+
+        <Label Text="Contratto Smart Working"
+               FontSize="20"
+               HorizontalOptions="Center"
+               FontAttributes="Bold" />
+
+
+        <!-- ANNO -->
+        <Label Text="Anno" />
+        <Entry Text="{Binding Year}" Keyboard="Numeric"/>
+
+        <!-- LIMITE SETTIMANALE -->
+        <Label Text="Limite ore settimanali di smart working" />
+        <Entry Text="{Binding WeeklyLimitHours}" Keyboard="Numeric"/>
+
+        <!-- LIMITE MENSILE -->
+        <Label Text="Limite ore mensili di smart working" />
+        <Entry Text="{Binding MonthlyLimitHours}" Keyboard="Numeric"/>
+
+        <!-- LIMITE ANNUALE -->
+        <Label Text="Limite ore annuali di smart working" />
+        <Entry Text="{Binding YearlyLimitHours}" Keyboard="Numeric"/>
+
+        <Button Text="Salva"
+                Clicked="OnSaveClicked"/>
+
+
+    </VerticalStackLayout>
+</ContentPage>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartWorkingTracker.App.Pages.ReportPage"
+             Title="ReportPage">
+
+
+    <VerticalStackLayout Padding="20" Spacing="10">
+
+
+        <!-- SELEZIONE -->
+        <HorizontalStackLayout>
+            <Entry Text="{Binding SelectedMonth}" WidthRequest="60"/>
+            <Entry Text="{Binding SelectedYear}" WidthRequest="80"/>
+
+            <Button Text="Aggiorna"
+                Clicked="OnReloadClicked"/>
+        </HorizontalStackLayout>
+
+        <!-- WARNING -->
+        <Label Text="⚠ Nessun contratto"
+           TextColor="Red"
+           IsVisible="{Binding ContractMissing}" />
+
+        <!-- DATI -->
+        <Label Text="{Binding SmartHours, StringFormat='Ore SW mese: {0:F1}'}"/>
+
+        <Label Text="{Binding WeeklyLimit, StringFormat='Limite settimanale: {0:F1}h'}"/>
+
+        <Label Text="{Binding MonthlyLimit, StringFormat='Limite mensile: {0:F1}h'}"/>
+
+        <Label Text="{Binding YearlyLimit, StringFormat='Limite annuale: {0:F1}h'}"/>
+
+        <Label Text="{Binding ForecastYearly, StringFormat='Previsione annuale: {0:F1}h'}"/>
+
+        <!-- STATI -->
+        <Label Text="{Binding StatusMonthly}" FontAttributes="Bold"/>
+        <Label Text="{Binding StatusYearly}" FontAttributes="Bold"/>
+
+
+    </VerticalStackLayout>
+
+
+</ContentPage>

@@ -4,8 +4,8 @@
              x:Class="SmartWorkingTracker.App.Pages.MainPage"
              xmlns:viewModels="clr-namespace:SmartWorkingTracker.App.ViewModels">
     <ScrollView>
-        <VerticalStackLayout Padding="10">
-            <Label Text="Smart Working Tracker"
+        <VerticalStackLayout Padding="10" Spacing="10">
+            <Label Text="Calendario Smart Working"
                FontSize="20"
                FontAttributes="Bold"
                HorizontalOptions="Center" />
@@ -17,7 +17,7 @@
                         Clicked="OnPrevMonth" 
                         Grid.Column="0" />
 
-                <Label Text="{Binding SelectedMonth}"
+                <Label Text="{Binding CurrentPeriod}"
                        HorizontalOptions="Center"
                        VerticalOptions="Center"  
                        Grid.Column="1"/>
@@ -72,6 +72,32 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+
+
+            <Label Text="⚠ Nessun contratto per l'anno selezionato"
+                   TextColor="Red"
+                   IsVisible="{Binding ContractMissing}"
+                   FontSize="15"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"/>
+
+
+            <!-- LEGENDA -->
+            
+
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Legenda" 
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"/>
+                <Label Text="Smart Working" FontSize="18" Margin="5" BackgroundColor="Green" HorizontalTextAlignment="Center"/>
+                <Label Text="Presenza" FontSize="18" Margin="5" BackgroundColor="Blue" HorizontalTextAlignment="Center"/>
+                <Label Text="Assente" FontSize="18" Margin="5" BackgroundColor="Red" HorizontalTextAlignment="Center"/>
+                <Label Text="Misto" FontSize="18" Margin="5" BackgroundColor="Purple" HorizontalTextAlignment="Center"/>
+                <Label Text="Non lavorativo" FontSize="18" Margin="5" BackgroundColor="LightGray" HorizontalTextAlignment="Center"/>               
+            </VerticalStackLayout>
+
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

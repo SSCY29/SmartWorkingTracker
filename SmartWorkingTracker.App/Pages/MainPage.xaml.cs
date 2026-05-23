@@ -3,21 +3,19 @@ using SmartWorkingTracker.App.ViewModels;
 namespace SmartWorkingTracker.App.Pages;
 
 public partial class MainPage : ContentPage
-{    
-    
+{
+    private readonly HomeViewModel _vm;
+
     public MainPage(HomeViewModel viewModel)
     {
         InitializeComponent();
-        BindingContext = viewModel;
+        _vm = viewModel;
     }
 
-    protected override async void OnAppearing()
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
-        if (BindingContext is HomeViewModel vm)
-        {
-            await vm.LoadDays();
-        }
+        base.OnNavigatedTo(args);
+        await LoadData();
     }
 
     private async void OnDayTapped(object sender, TappedEventArgs e)
@@ -45,7 +43,7 @@ public partial class MainPage : ContentPage
                 vm.SelectedMonth--;
             }
 
-            await vm.LoadDays();
+            await LoadData();
         }
     }
 
@@ -63,8 +61,14 @@ public partial class MainPage : ContentPage
                 vm.SelectedMonth++;
             }
 
-            await vm.LoadDays();
+            await LoadData();
         }
     }
 
+    public async Task LoadData()
+    {
+        await _vm.LoadDays();
+        BindingContext = null; // 🔥 forza refresh
+        BindingContext = _vm; // 🔥 ricollega
+    }
 }

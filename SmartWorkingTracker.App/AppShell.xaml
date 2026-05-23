@@ -7,10 +7,25 @@
     xmlns:pages="clr-namespace:SmartWorkingTracker.App.Pages"
     Title="Smart Working Tracker">
 
-    <ShellItem Route="home" Title="Home Page">
+    <!-- ✅ HOME -->
+    <ShellItem Title="Home" Route="home">
         <ShellContent
-            Title="Home Page"
+            Title="Home"
             ContentTemplate="{DataTemplate pages:MainPage}" />
+    </ShellItem>
+
+    <!-- ✅ CONTRATTI -->
+    <ShellItem Title="Contratti" Route="contracts">
+        <ShellContent
+            Title="Contratti"
+            ContentTemplate="{DataTemplate pages:ContractPage}" />
+    </ShellItem>
+
+    <!-- ✅ REPORT -->
+    <ShellItem Title="Report">
+        <ShellContent
+            Title="Report"
+            ContentTemplate="{DataTemplate pages:ReportPage}" />
     </ShellItem>
 
 </Shell>

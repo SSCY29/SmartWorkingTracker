@@ -10,6 +10,7 @@ namespace SmartWorkingTracker.App
 
             Routing.RegisterRoute("sessionList", typeof(SessionListPage));
             Routing.RegisterRoute("editSession", typeof(EditSessionPage));
+            Routing.RegisterRoute("editContract", typeof(EditContractPage));
         }
     }
 }

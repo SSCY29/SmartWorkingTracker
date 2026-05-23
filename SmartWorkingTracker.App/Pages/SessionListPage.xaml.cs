@@ -16,9 +16,7 @@ public partial class SessionListPage : ContentPage
     }
 
     // Riceve la data dalla Shell
-    private DateTime? _pendingDate;
-
-    
+    private DateTime? _pendingDate;    
     public string DateString
     {
         set
@@ -71,9 +69,7 @@ public partial class SessionListPage : ContentPage
         if (sender is Button btn && btn.CommandParameter is WorkSession session)
         {
 
-            await Shell.Current.GoToAsync(
-                $"editSession?id={session.Id}"
-            );
+            await Shell.Current.GoToAsync($"editSession?id={session.Id}");
 
         }
     }
