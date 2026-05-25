@@ -2,42 +2,70 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SmartWorkingTracker.App.Pages.ContractPage"
-             Title="Contratti">
+             Title="Contratti"
+             xmlns:converters="clr-namespace:SmartWorkingTracker.App.Converters">
 
-    <VerticalStackLayout Padding="10">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-        <Button Text="➕ Nuovo Contratto"
+    <Grid>
+
+        <VerticalStackLayout Spacing="10" Padding="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+
+            <Button Text="➕ Nuovo Contratto"
                 Clicked="OnAddClicked"/>
 
-        <CollectionView ItemsSource="{Binding Contracts}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
+            <CollectionView ItemsSource="{Binding Contracts}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
 
-                    <Border Padding="10" Margin="5">
-                        <VerticalStackLayout>
+                        <Border Padding="10" Margin="5">
+                            <Grid ColumnDefinitions="*,Auto">
 
-                            <Label Text="{Binding Year}" FontAttributes="Bold"/>
-                            <Label Text="{Binding MonthlyLimitHours, StringFormat='Mensile: {0}h'}"/>
+                                <VerticalStackLayout Grid.Column="0">
+                                    <Label Text="{Binding Year}" FontAttributes="Bold"/>
+                                    <Label Text="{Binding YearlyLimitHours, StringFormat='Annuale: {0}h'}"/>
 
-                            <HorizontalStackLayout Spacing="10">
+                                </VerticalStackLayout>
 
-                                <Button Text="Modifica"
-                                        Clicked="OnEditClicked"
-                                        CommandParameter="{Binding}" />
+                                <HorizontalStackLayout Grid.Column="1" Spacing="5">
 
-                                <Button Text="Elimina"
-                                        Clicked="OnDeleteClicked"
-                                        CommandParameter="{Binding}" />
+                                    <Button Text="✏"
+                                        WidthRequest="40"
+                                        CommandParameter="{Binding}"
+                                        Clicked="OnEditClicked"/>
+                                    <Button Text="🗑"
+                                        WidthRequest="40"
+                                        CommandParameter="{Binding}"      
+                                        Clicked="OnDeleteClicked"/>
 
-                            </HorizontalStackLayout>
+                                </HorizontalStackLayout>
 
-                        </VerticalStackLayout>
-                    </Border>
+                            </Grid>
+                        </Border>
 
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
 
+        <Grid IsVisible="{Binding IsLoading}">
+            <VerticalStackLayout VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Spacing="10">
+
+                <ActivityIndicator
+            IsRunning="True" />
+
+                <Label Text="Caricamento..."  HorizontalOptions="Center" />
+
+            </VerticalStackLayout>
+
+        </Grid>
+
+    </Grid>
 </ContentPage>

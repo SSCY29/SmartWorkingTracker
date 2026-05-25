@@ -30,50 +30,82 @@ namespace SmartWorkingTracker.App.ViewModels
 
         public async Task Load()
         {
-            _existing = null;
-            if (_Id.HasValue)
-            {
-                var contracts = await _service.GetContracts();
-                var contract = contracts.FirstOrDefault(c => c.Id == _Id.Value);
-                _existing = contract;
-            }
+            IsLoading = true;
 
-            if (_existing == null)
+            try
             {
-                _existing = new Contract()
+                _existing = null;
+                if (_Id.HasValue)
                 {
-                    Year = DateTime.Now.Year,
-                    WeeklyLimitHours = 40,
-                    MonthlyLimitHours = 160,
-                    YearlyLimitHours = 1920
-                };
+                    var contracts = await _service.GetContracts();
+                    var contract = contracts.FirstOrDefault(c => c.Id == _Id.Value);
+                    _existing = contract;
+                }
+
+                if (_existing == null)
+                {
+                    _existing = new Contract()
+                    {
+                        Year = DateTime.Now.Year,
+                        WeeklyLimitHours = 40,
+                        MonthlyLimitHours = 160,
+                        YearlyLimitHours = 1920
+                    };
+                }
+
+                Year = _existing.Year;
+                WeeklyLimitHours = _existing.WeeklyLimitHours;
+                MonthlyLimitHours = _existing.MonthlyLimitHours;
+                YearlyLimitHours = _existing.YearlyLimitHours;
+            }
+            catch (Exception)
+            {
+
+            }
+            finally
+            {
+                IsLoading = false;
             }
 
-            Year = _existing.Year;
-            WeeklyLimitHours = _existing.WeeklyLimitHours;
-            MonthlyLimitHours = _existing.MonthlyLimitHours;
-            YearlyLimitHours = _existing.YearlyLimitHours;
         }
-        
+
 
         public async Task<bool> Save()
         {
-            var contract = _existing ?? new Contract();
+            IsLoading = true;
+            bool result = true;
+            try
+            {
 
-            contract.Year = Year;
-            contract.WeeklyLimitHours = WeeklyLimitHours;
-            contract.MonthlyLimitHours = MonthlyLimitHours;
-            contract.YearlyLimitHours = YearlyLimitHours;
+                var contract = _existing ?? new Contract();
 
-            // ✅ VALIDAZIONE ANNO UNICO
-            var existing = await _service.GetContracts();
+                contract.Year = Year;
+                contract.WeeklyLimitHours = WeeklyLimitHours;
+                contract.MonthlyLimitHours = MonthlyLimitHours;
+                contract.YearlyLimitHours = YearlyLimitHours;
 
-            if (existing.Any(c => c.Year == Year && c.Id != contract.Id))
-                return false;
+                // ✅ VALIDAZIONE ANNO UNICO
+                var existing = await _service.GetContracts();
 
-            await _service.SaveContract(contract);
+                if (existing.Any(c => c.Year == Year && c.Id != contract.Id))
+                    result = false;
+                else
+                {
+                    await _service.SaveContract(contract);
+                }             
 
-            return true;
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+
+
+            return result;
         }
     }
 }

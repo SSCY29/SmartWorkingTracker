@@ -5,7 +5,7 @@ using SmartWorkingTracker.Data.Services;
 
 namespace SmartWorkingTracker.App.ViewModels
 {
-    public class EditSessionViewModel
+    public class EditSessionViewModel : BaseViewModel
     {
         private WorkSession _currentSession;
         private readonly DatabaseService _service;
@@ -50,18 +50,35 @@ namespace SmartWorkingTracker.App.ViewModels
 
         public async Task LoadSession() // ✅ Carica i dati di una sessione esistente
         {
-            if(Id == null)
-                return;
+            IsLoading = true;
+            try
+            {
+                if (Id == null)
+                    return;
+                else
+                {
+                    var sessions = await _service.GetSessionById(Id.Value);
+                    var session = sessions.FirstOrDefault();
 
-            var sessions = await _service.GetSessionById(Id.Value);
-            var session = sessions.FirstOrDefault();
+                    if (session == null)
+                        return;
+                    else
+                    {
+                        _currentSession = session;
+                        InitializeData();
+                    }
+                }
+                
+            }
+            catch (Exception)
+            {
 
-            if (session == null)
-                return;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
 
-            _currentSession = session;
-
-            InitializeData();
         }
 
         private async void InitializeData()
@@ -72,43 +89,57 @@ namespace SmartWorkingTracker.App.ViewModels
             EndTime = _currentSession.EndDate.TimeOfDay;
             TypeIndex = (int)_currentSession.Type;
             Notes = _currentSession.Notes;
-
         }
 
         public async Task<bool> Save()
         {
-            WorkSession session;
-
-            if (_currentSession != null)
+            IsLoading = true;
+            bool result = true;
+            try
             {
-                // ✅ UPDATE
-                session = _currentSession;
+                WorkSession session;
 
-                session.StartDate = Date.Date + StartTime;
-                session.EndDate = Date.Date + EndTime;
-                session.Type = (SessionType)TypeIndex;
-                session.Notes = Notes;
-            }
-            else
-            {
-                // ✅ INSERT
-                session = new WorkSession
+                if (_currentSession != null)
                 {
-                    StartDate = Date.Date + StartTime,
-                    EndDate = Date.Date + EndTime,
-                    Type = (SessionType)TypeIndex,
-                    Notes = Notes
-                };
+                    // ✅ UPDATE
+                    session = _currentSession;
+
+                    session.StartDate = Date.Date + StartTime;
+                    session.EndDate = Date.Date + EndTime;
+                    session.Type = (SessionType)TypeIndex;
+                    session.Notes = Notes;
+                }
+                else
+                {
+                    // ✅ INSERT
+                    session = new WorkSession
+                    {
+                        StartDate = Date.Date + StartTime,
+                        EndDate = Date.Date + EndTime,
+                        Type = (SessionType)TypeIndex,
+                        Notes = Notes
+                    };
+                }
+
+                var existing = await _service.GetSessionsByDate(Date.Date.Year, Date.Date.Month, Date.Date.Day);
+
+                if (!WorkSessionValidator.IsValid(session, existing))
+                    result = false;
+                else
+                    await _service.SaveSession(session);
+
+                
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+            finally
+            {
+                IsLoading = false;
             }
 
-            var existing = await _service.GetAllSessions();
-
-            if (!WorkSessionValidator.IsValid(session, existing))
-                return false;
-
-            await _service.SaveSession(session);
-
-            return true;
+            return result;
         }
     }
 }

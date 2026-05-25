@@ -2,43 +2,73 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SmartWorkingTracker.App.Pages.ReportPage"
-             Title="ReportPage">
+             Title="Report"
+                      xmlns:converters="clr-namespace:SmartWorkingTracker.App.Converters">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-    <VerticalStackLayout Padding="20" Spacing="10">
+    <Grid>
 
+        <VerticalStackLayout Spacing="10" Padding="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
 
-        <!-- SELEZIONE -->
-        <HorizontalStackLayout>
-            <Entry Text="{Binding SelectedMonth}" WidthRequest="60"/>
-            <Entry Text="{Binding SelectedYear}" WidthRequest="80"/>
+            <!-- SELEZIONE -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Picker ItemsSource="{Binding Years}" SelectedItem="{Binding SelectedYear}" />
 
-            <Button Text="Aggiorna"
-                Clicked="OnReloadClicked"/>
-        </HorizontalStackLayout>
+                <Button Text="Aggiorna" Clicked="OnReloadClicked" Grid.Column="1"/>
+            </Grid>
 
-        <!-- WARNING -->
-        <Label Text="⚠ Nessun contratto"
+            <!-- WARNING -->
+            <Label Text="⚠ Nessun contratto"
            TextColor="Red"
            IsVisible="{Binding ContractMissing}" />
 
-        <!-- DATI -->
-        <Label Text="{Binding SmartHours, StringFormat='Ore SW mese: {0:F1}'}"/>
+            <!-- DATI -->
+            <Label Text="{Binding JanuaryHours, StringFormat='Ore SW di Gen: {0:F1}h'}"/>
+            <Label Text="{Binding FebruaryHours, StringFormat='Ore SW di Feb: {0:F1}h'}"/>
+            <Label Text="{Binding MarchHours, StringFormat='Ore SW di Mar: {0:F1}h'}"/>
+            <Label Text="{Binding AprilHours, StringFormat='Ore SW di Apr: {0:F1}h'}"/>
+            <Label Text="{Binding MayHours, StringFormat='Ore SW di Mag: {0:F1}h'}"/>
+            <Label Text="{Binding JuneHours, StringFormat='Ore SW di Giu: {0:F1}h'}"/>
+            <Label Text="{Binding JulyHours, StringFormat='Ore SW di Lug: {0:F1}h'}"/>
+            <Label Text="{Binding AugustHours, StringFormat='Ore SW di Ago: {0:F1}h'}"/>
+            <Label Text="{Binding SeptemberHours, StringFormat='Ore SW di Set: {0:F1}h'}"/>
+            <Label Text="{Binding OctoberHours, StringFormat='Ore SW di Ott: {0:F1}h'}"/>
+            <Label Text="{Binding NovemberHours, StringFormat='Ore SW di Nov: {0:F1}h'}"/>
+            <Label Text="{Binding DecemberHours, StringFormat='Ore SW di Dic: {0:F1}h'}"/>
 
-        <Label Text="{Binding WeeklyLimit, StringFormat='Limite settimanale: {0:F1}h'}"/>
+            <Label Text="{Binding YearlyLimit, StringFormat='Limite annuale: {0:F1}h'}"/>
+            <Label Text="{Binding AvgYearly, StringFormat='Media mensile: {0:F1}h'}"/>
+            <Label Text="{Binding ForecastYearly, StringFormat='Previsione annuale: {0:F1}h'}"/>
 
-        <Label Text="{Binding MonthlyLimit, StringFormat='Limite mensile: {0:F1}h'}"/>
-
-        <Label Text="{Binding YearlyLimit, StringFormat='Limite annuale: {0:F1}h'}"/>
-
-        <Label Text="{Binding ForecastYearly, StringFormat='Previsione annuale: {0:F1}h'}"/>
-
-        <!-- STATI -->
-        <Label Text="{Binding StatusMonthly}" FontAttributes="Bold"/>
-        <Label Text="{Binding StatusYearly}" FontAttributes="Bold"/>
+            <!-- STATI -->
+            <Label Text="{Binding StatusMonthly}" FontAttributes="Bold"/>
+            <Label Text="{Binding StatusYearly}" FontAttributes="Bold"/>
 
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+        <Grid IsVisible="{Binding IsLoading}">
+            <VerticalStackLayout VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Spacing="10">
 
+                <ActivityIndicator
+            IsRunning="True" />
+
+                <Label Text="Caricamento..."  HorizontalOptions="Center" />
+
+            </VerticalStackLayout>
+
+        </Grid>
+
+    </Grid>
 
 </ContentPage>

@@ -28,28 +28,51 @@ namespace SmartWorkingTracker.App.ViewModels
         {
             _service = db;
         }
-        
+
         public async Task Load(DateTime date)
         {
-            Date = date;
-            Sessions.Clear();
+            IsLoading = true;
 
+            try
+            {
+                Date = date;
+                Sessions.Clear();
 
-            var sessions = await _service.GetSessionsByMonth(Date.Year, Date.Month);
+                var sessions = await _service.GetSessionsByMonth(Date.Year, Date.Month);
 
-            sessions = sessions.Where(s => s.StartDate.Date == Date).OrderBy(s => s.StartDate).ToList();
+                sessions = sessions?.Where(s => s.StartDate.Date == Date)?.ToList() ?? new List<WorkSession>();
 
-            foreach (var s in sessions)
-                Sessions.Add(s);
+                foreach (var s in sessions.OrderBy(x => x.StartDate.Hour).ThenBy(x => x.StartDate.Minute))
+                    Sessions.Add(s);
+
+            }
+            catch (Exception)
+            {                
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
-
 
         public async Task Delete(WorkSession session)
         {
-            await _service.DeleteSession(session);
+            IsLoading = true;
+
+            try
+            {
+                await _service.DeleteSession(session);
 
             // REMOVE DIRETTO (più veloce e sicuro)
             Sessions.Remove(session);
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                IsLoading = false;
+            }
 
         }
 

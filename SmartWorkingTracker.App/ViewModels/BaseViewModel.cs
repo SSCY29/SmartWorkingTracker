@@ -6,8 +6,12 @@ using System.Text;
 
 namespace SmartWorkingTracker.App.ViewModels
 {
-    public class BaseViewModel
+    public class BaseViewModel : INotifyPropertyChanged
     {
+        public BaseViewModel()
+        {
+                
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -16,5 +20,21 @@ namespace SmartWorkingTracker.App.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+
+                if (_isLoading != value)
+                {
+                    _isLoading = value;
+                    OnPropertyChanged(); // 🔥 NON mettere il nome
+                }
+
+            }
+        }
     }
 }

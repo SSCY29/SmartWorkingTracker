@@ -2,34 +2,59 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SmartWorkingTracker.App.Pages.EditContractPage"
-             Title="Contratto">
-    <VerticalStackLayout Padding="20" Spacing="10">
+             Title="Contratto"
+                      xmlns:converters="clr-namespace:SmartWorkingTracker.App.Converters">
 
-        <Label Text="Contratto Smart Working"
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+
+        <VerticalStackLayout Spacing="10" Padding="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+
+            <Label Text="Contratto Smart Working"
                FontSize="20"
                HorizontalOptions="Center"
                FontAttributes="Bold" />
 
 
-        <!-- ANNO -->
-        <Label Text="Anno" />
-        <Entry Text="{Binding Year}" Keyboard="Numeric"/>
+            <!-- ANNO -->
+            <Label Text="Anno" />
+            <Entry Text="{Binding Year}" Keyboard="Numeric"/>
 
-        <!-- LIMITE SETTIMANALE -->
-        <Label Text="Limite ore settimanali di smart working" />
-        <Entry Text="{Binding WeeklyLimitHours}" Keyboard="Numeric"/>
+            <!-- LIMITE SETTIMANALE -->
+            <Label Text="Limite ore settimanali di smart working" />
+            <Entry Text="{Binding WeeklyLimitHours}" Keyboard="Numeric"/>
 
-        <!-- LIMITE MENSILE -->
-        <Label Text="Limite ore mensili di smart working" />
-        <Entry Text="{Binding MonthlyLimitHours}" Keyboard="Numeric"/>
+            <!-- LIMITE MENSILE -->
+            <Label Text="Limite ore mensili di smart working" />
+            <Entry Text="{Binding MonthlyLimitHours}" Keyboard="Numeric"/>
 
-        <!-- LIMITE ANNUALE -->
-        <Label Text="Limite ore annuali di smart working" />
-        <Entry Text="{Binding YearlyLimitHours}" Keyboard="Numeric"/>
+            <!-- LIMITE ANNUALE -->
+            <Label Text="Limite ore annuali di smart working" />
+            <Entry Text="{Binding YearlyLimitHours}" Keyboard="Numeric"/>
 
-        <Button Text="Salva"
+            <Button Text="Salva"
                 Clicked="OnSaveClicked"/>
 
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <Grid IsVisible="{Binding IsLoading}">
+            <VerticalStackLayout VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Spacing="10">
+
+                <ActivityIndicator
+            IsRunning="True" />
+
+                <Label Text="Caricamento..."  HorizontalOptions="Center" />
+
+            </VerticalStackLayout>
+
+        </Grid>
+
+    </Grid>
 </ContentPage>

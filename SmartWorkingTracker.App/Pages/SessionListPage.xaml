@@ -3,62 +3,86 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SmartWorkingTracker.App.Pages.SessionListPage"
              xmlns:Models="clr-namespace:SmartWorkingTracker.Core.Models;assembly=SmartWorkingTracker.Core"
-             Title="Lista Sessioni">
+             Title="Lista Sessioni"
+                      xmlns:converters="clr-namespace:SmartWorkingTracker.App.Converters">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-    <VerticalStackLayout Padding="10" Spacing="10">
+    <Grid>
 
-        <!-- HEADER -->
-        <Label Text="{Binding Date, StringFormat='Sessioni del {0:dd/MM/yyyy}'}"
+        <VerticalStackLayout Spacing="10" Padding="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+
+            <!-- HEADER -->
+            <Label Text="{Binding Date, StringFormat='Sessioni del {0:dd/MM/yyyy}'}"
                FontSize="18"
                FontAttributes="Bold"
                HorizontalOptions="Center" />
 
-        <!-- ADD BUTTON -->
-        <Button Text="➕ Nuova sessione"
+            <!-- ADD BUTTON -->
+            <Button Text="➕ Nuova sessione"
                 Clicked="OnAddClicked" />
 
-        <!-- LISTA SESSIONI -->
-        <CollectionView ItemsSource="{Binding Sessions}">
+            <!-- LISTA SESSIONI -->
+            <CollectionView ItemsSource="{Binding Sessions}">
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="Models:WorkSession">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="Models:WorkSession">
 
-                    <Border Padding="10"
+                        <Border Padding="10"
                             Margin="5"
                             Stroke="Gray"
                             StrokeThickness="1">
 
-                        <VerticalStackLayout Spacing="5">
 
-                            <Label Text="{Binding Type}"
-                                   FontAttributes="Bold" />
+                            <Grid ColumnDefinitions="*,Auto">
 
-                            <Label Text="{Binding StartDate, StringFormat='Inizio: {0:HH:mm}'}" />
-                            <Label Text="{Binding EndDate, StringFormat='Fine: {0:HH:mm}'}" />
+                                <VerticalStackLayout Grid.Column="0">
+                                    <Label Text="{Binding Type}" />
+                                    <Label Text="{Binding StartDate, StringFormat='{0:HH:mm}'}"/>
+                                </VerticalStackLayout>
 
-                            <HorizontalStackLayout Spacing="10">
+                                <HorizontalStackLayout Grid.Column="1" Spacing="5">
 
-                                <Button Text="Modifica"
-                                        Clicked="OnEditClicked"
-                                        CommandParameter="{Binding}" />
+                                    <Button Text="✏"
+                                        WidthRequest="40"
+                                        CommandParameter="{Binding}"
+                                        Clicked="OnEditClicked"/>
+                                    <Button Text="🗑"
+                                        WidthRequest="40"
+                                        CommandParameter="{Binding}"
+                                        Clicked="OnDeleteClicked"/>
 
-                                <Button Text="Elimina"
-                                        Clicked="OnDeleteClicked"
-                                        CommandParameter="{Binding}" />
+                                </HorizontalStackLayout>
 
-                            </HorizontalStackLayout>
+                            </Grid>
 
-                        </VerticalStackLayout>
 
-                    </Border>
+                        </Border>
 
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
 
-        </CollectionView>
+            </CollectionView>
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+        <Grid IsVisible="{Binding IsLoading}">
+            <VerticalStackLayout VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Spacing="10">
 
+                <ActivityIndicator
+            IsRunning="True" />
+
+                <Label Text="Caricamento..."  HorizontalOptions="Center" />
+
+            </VerticalStackLayout>
+
+        </Grid>
+
+    </Grid>
 
 </ContentPage>

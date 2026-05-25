@@ -1,4 +1,5 @@
 using SmartWorkingTracker.App.ViewModels;
+using System.Diagnostics;
 
 namespace SmartWorkingTracker.App.Pages;
 
@@ -10,13 +11,18 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         _vm = viewModel;
+
+        BindingContext = _vm; // ✅ UNA VOLTA SOLA
+
     }
 
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
-        await LoadData();
+
+        _ = LoadData();
     }
+
 
     private async void OnDayTapped(object sender, TappedEventArgs e)
     {
@@ -67,8 +73,19 @@ public partial class MainPage : ContentPage
 
     public async Task LoadData()
     {
-        await _vm.LoadDays();
-        BindingContext = null; // 🔥 forza refresh
-        BindingContext = _vm; // 🔥 ricollega
+        try
+        {
+            await _vm.LoadDays();
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Errore caricamento dati: {ex.Message}");
+        }
+    }
+
+    private async void OnReloadClicked(object sender, EventArgs e)
+    {
+        await LoadData();
     }
 }

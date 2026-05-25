@@ -16,7 +16,19 @@ namespace SmartWorkingTracker.App.ViewModels
         public int SelectedMonth { get; set; } = DateTime.Now.Month;
         public int SelectedYear { get; set; } = DateTime.Now.Year;
 
+        public List<int> Years { get; set; } =
+            Enumerable.Range(2020, DateTime.Now.Year - 2019).ToList();
+
         public string CurrentPeriod => $"{SelectedYear} - {GetMonth()}";
+
+
+
+        public List<string> WeekDays { get; } = new()
+        {
+            "L", "M", "M", "G", "V", "S", "D"
+        };
+
+
 
         public HomeViewModel(DatabaseService service, AppDatabase db)
         {
@@ -26,48 +38,81 @@ namespace SmartWorkingTracker.App.ViewModels
 
         public async Task LoadDays()
         {
-            Days.Clear();
+            IsLoading = true;
 
-            await _db.InitializeAsync();
-
-
-            var contract = await _service.GetContractByYear(SelectedYear);
-
-            ContractMissing = contract == null;
-
-            var sessions = await _service.GetSessionsByMonth(SelectedYear, SelectedMonth);
-
-            var firstDayOfMonth = new DateTime(SelectedYear, SelectedMonth, 1);
-
-            int startOffset = (int)firstDayOfMonth.DayOfWeek;
-
-            // rendiamo Monday = 0
-            startOffset = startOffset == 0 ? 6 : startOffset - 1;
-
-            // slot vuoti iniziali
-            for (int i = 0; i < startOffset; i++)
+            try
             {
-                Days.Add(new DayViewModel
+
+
+                if (SelectedYear != DateTime.Now.Year)
                 {
-                    Date = DateTime.MinValue // placeholder
-                });
+                    SelectedMonth = 1;
+                }
+
+                Days.Clear();
+
+                await _db.InitializeAsync();
+
+#if DEBUG
+                await _service.PopulateDatabase();
+#endif
+
+                var contract = await _service.GetContractByYear(SelectedYear);
+
+                ContractMissing = contract == null;
+
+                var sessions = await _service.GetSessionsByMonth(SelectedYear, SelectedMonth);
+
+                var firstDayOfMonth = new DateTime(SelectedYear, SelectedMonth, 1);
+
+                int startOffset = (int)firstDayOfMonth.DayOfWeek;
+
+                // rendiamo Monday = 0
+                startOffset = startOffset == 0 ? 6 : startOffset - 1;
+
+                // slot vuoti iniziali
+                for (int i = 0; i < startOffset; i++)
+                {
+                    Days.Add(new DayViewModel
+                    {
+                        Date = DateTime.MinValue // placeholder
+                    });
+                }
+
+                int daysInMonth = DateTime.DaysInMonth(SelectedYear, SelectedMonth);
+
+                for (int i = 1; i <= daysInMonth; i++)
+                {
+                    var date = new DateTime(SelectedYear, SelectedMonth, i);
+
+                    var daySessions = sessions
+                        .Where(s => s.StartDate.Date == date.Date)
+                        .ToList();
+
+                    Days.Add(new DayViewModel
+                    {
+                        Date = date,
+                        Sessions = daySessions
+                    });
+                }
+
+                await Task.Delay(1000);
             }
-
-            int daysInMonth = DateTime.DaysInMonth(SelectedYear, SelectedMonth);
-
-            for (int i = 1; i <= daysInMonth; i++)
+            catch (Exception)
             {
-                var date = new DateTime(SelectedYear, SelectedMonth, i);
 
-                var daySessions = sessions
-                    .Where(s => s.StartDate.Date == date.Date)
-                    .ToList();
+            }
+            finally
+            {
 
-                Days.Add(new DayViewModel
-                {
-                    Date = date,
-                    Sessions = daySessions
-                });
+                IsLoading = false;
+
+
+
+                OnPropertyChanged(nameof(ContractMissing));
+                OnPropertyChanged(nameof(SelectedMonth));
+                OnPropertyChanged(nameof(SelectedYear));
+                OnPropertyChanged(nameof(CurrentPeriod));
             }
 
         }

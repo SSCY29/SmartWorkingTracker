@@ -17,24 +17,61 @@ namespace SmartWorkingTracker.App.ViewModels
 
         public async Task Load()
         {
-            Contracts.Clear();
+            IsLoading = true;
 
-            var list = await _service.GetContracts();
+            try
+            {
+                Contracts.Clear();
 
-            foreach (var c in list.OrderBy(c => c.Year))
-                Contracts.Add(c);
+                var list = await _service.GetContracts();
+
+                foreach (var c in list.OrderByDescending(c => c.Year))
+                    Contracts.Add(c);
+            }
+            catch (Exception)
+            {                
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+
         }
 
         public async Task Save(Contract contract)
         {
-            await _service.SaveContract(contract);
-            await Load();
+            IsLoading = true;
+
+            try
+            {
+                await _service.SaveContract(contract);
+                await Load();
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         public async Task Delete(Contract contract)
         {
-            await _service.DeleteContract(contract);
-            Contracts.Remove(contract);
+            IsLoading = true;
+
+            try
+            {
+                await _service.DeleteContract(contract);
+                Contracts.Remove(contract);
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
     }
 

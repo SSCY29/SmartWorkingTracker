@@ -31,7 +31,7 @@ namespace SmartWorkingTracker.App
                 var path = Path.Combine(FileSystem.AppDataDirectory, "smartworking.db");
 
                 return new AppDatabase(path);
-                
+
             });
 
             // ============================
@@ -43,6 +43,7 @@ namespace SmartWorkingTracker.App
             // ============================
             // VIEWMODELS
             // ============================
+            builder.Services.AddSingleton<BaseViewModel>();
             builder.Services.AddSingleton<DayViewModel>();
             builder.Services.AddSingleton<HomeViewModel>();
             builder.Services.AddSingleton<SessionListViewModel>();
