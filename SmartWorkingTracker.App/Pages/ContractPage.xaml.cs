@@ -12,7 +12,8 @@ public partial class ContractPage : ContentPage
     {
         InitializeComponent();
         _vm = vm;
-        
+
+        BindingContext = _vm; // ✅ UNA VOLTA SOLA
     }
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
@@ -20,7 +21,6 @@ public partial class ContractPage : ContentPage
         base.OnNavigatedTo(args);
 
         await _vm.Load();
-        BindingContext = _vm;
     }
 
     // ✅ Aggiunta contratto (veloce MVP)

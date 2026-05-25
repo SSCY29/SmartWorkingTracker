@@ -13,7 +13,7 @@
 
     <Grid>
 
-        <VerticalStackLayout Padding="10" Spacing="10" IsVisible="{Binding IsLoading,Converter={StaticResource InverseBooleanConverter}}">
+        <VerticalStackLayout Padding="10" Spacing="10" IsVisible="{Binding IsLoading,Converter={StaticResource InverseBoolConverter}}">
 
             <!-- ORA INIZIO -->
             <Label Text="Ora iniziale" />

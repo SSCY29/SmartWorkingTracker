@@ -74,9 +74,7 @@
                              HorizontalOptions="Center"
                              Spacing="10">
 
-                <ActivityIndicator
-            IsRunning="True" />
-
+                <ActivityIndicator IsRunning="True" />
                 <Label Text="Caricamento..."  HorizontalOptions="Center" />
 
             </VerticalStackLayout>

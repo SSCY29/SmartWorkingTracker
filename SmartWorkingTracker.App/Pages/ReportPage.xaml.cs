@@ -10,7 +10,9 @@ public partial class ReportPage : ContentPage
     {
         InitializeComponent();
 
-        _vm = vm;        
+        _vm = vm;
+
+        BindingContext = _vm; // ✅ UNA VOLTA SOLA
     }
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
@@ -27,7 +29,5 @@ public partial class ReportPage : ContentPage
     public async Task LoadData()
     {
         await _vm.Load();
-        BindingContext = null; // 🔥 forza refresh
-        BindingContext = _vm; // 🔥 ricollega
     }
 }

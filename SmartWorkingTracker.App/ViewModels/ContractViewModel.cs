@@ -52,6 +52,7 @@ namespace SmartWorkingTracker.App.ViewModels
             }
             finally
             {
+                await Task.Delay(500);
                 IsLoading = false;
             }
         }

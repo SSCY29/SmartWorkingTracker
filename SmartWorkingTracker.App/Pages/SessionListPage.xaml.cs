@@ -13,6 +13,8 @@ public partial class SessionListPage : ContentPage
         InitializeComponent();
 
         _vm = vm;
+
+        BindingContext = _vm; // ✅ UNA VOLTA SOLA
     }
 
     // Riceve la data dalla Shell
@@ -33,8 +35,6 @@ public partial class SessionListPage : ContentPage
         {
             await _vm.Load(_pendingDate.Value);
 
-            BindingContext = null; // 🔥 forza refresh
-            BindingContext = _vm; // 🔥 ricollega
         }
     }
 

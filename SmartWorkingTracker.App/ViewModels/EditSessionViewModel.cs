@@ -53,9 +53,7 @@ namespace SmartWorkingTracker.App.ViewModels
             IsLoading = true;
             try
             {
-                if (Id == null)
-                    return;
-                else
+                if(Id != null)
                 {
                     var sessions = await _service.GetSessionById(Id.Value);
                     var session = sessions.FirstOrDefault();
@@ -76,6 +74,7 @@ namespace SmartWorkingTracker.App.ViewModels
             }
             finally
             {
+                await Task.Delay(500);
                 IsLoading = false;
             }
 

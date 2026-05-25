@@ -21,6 +21,8 @@ public partial class EditContractPage : ContentPage
     {
         InitializeComponent();
         _vm = vm;
+
+        BindingContext = _vm; // ✅ UNA VOLTA SOLA
     }
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
@@ -28,8 +30,6 @@ public partial class EditContractPage : ContentPage
         base.OnNavigatedTo(args);
 
         await _vm.Load();
-        BindingContext = null; // 🔥 forza refresh
-        BindingContext = _vm; // 🔥 ricollega
 
     }
 

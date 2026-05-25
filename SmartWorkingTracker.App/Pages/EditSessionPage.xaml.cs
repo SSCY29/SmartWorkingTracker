@@ -34,6 +34,8 @@ namespace SmartWorkingTracker.App.Pages
             InitializeComponent();
 
             _vm = vm;
+
+            BindingContext = _vm; // ✅ UNA VOLTA SOLA
         }
 
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
@@ -45,8 +47,6 @@ namespace SmartWorkingTracker.App.Pages
                 await _vm.LoadSession();
             }
 
-            BindingContext = null; // 🔥 forza refresh
-            BindingContext = _vm; // 🔥 ricollega
 
         }
 
