@@ -10,8 +10,16 @@ public partial class EditContractPage : ContentPage
     {
         set
         {
-            var id = int.Parse(value);
-            _vm.SetId(id);
+            if(string.IsNullOrEmpty(value))
+            {
+                _vm.SetId(null);
+            }
+            else
+            {
+                var id = int.Parse(value);
+                _vm.SetId(id);
+            }
+            
         }
     }
 

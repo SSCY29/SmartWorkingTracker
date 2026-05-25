@@ -54,7 +54,7 @@ namespace SmartWorkingTracker.App.ViewModels
                 await _db.InitializeAsync();
 
 #if DEBUG
-                await _service.PopulateDatabase();
+                //await _service.PopulateDatabase();
 #endif
 
                 var contract = await _service.GetContractByYear(SelectedYear);

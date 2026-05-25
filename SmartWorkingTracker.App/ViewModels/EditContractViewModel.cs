@@ -23,7 +23,7 @@ namespace SmartWorkingTracker.App.ViewModels
             _service = service;
         }
 
-        public void SetId(int id)
+        public void SetId(int? id)
         {
             Id = id;
         }
@@ -57,6 +57,11 @@ namespace SmartWorkingTracker.App.ViewModels
                 WeeklyLimitHours = _existing.WeeklyLimitHours;
                 MonthlyLimitHours = _existing.MonthlyLimitHours;
                 YearlyLimitHours = _existing.YearlyLimitHours;
+
+                OnPropertyChanged(nameof(Year));
+                OnPropertyChanged(nameof(WeeklyLimitHours));
+                OnPropertyChanged(nameof(MonthlyLimitHours));
+                OnPropertyChanged(nameof(YearlyLimitHours));
             }
             catch (Exception)
             {
@@ -64,6 +69,7 @@ namespace SmartWorkingTracker.App.ViewModels
             }
             finally
             {
+                await Task.Delay(500);
                 IsLoading = false;
             }
 

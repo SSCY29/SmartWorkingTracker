@@ -24,11 +24,6 @@ namespace SmartWorkingTracker.App.ViewModels
         {
             _service = service;
 
-
-            StartTime = new TimeSpan(9, 0, 0);
-            EndTime = new TimeSpan(18, 0, 0);
-            TypeIndex = 0;
-
         }
 
         public void SetDate(DateTime? date) // ✅ Inizializza i valori di default per una nuova sessione
@@ -41,6 +36,12 @@ namespace SmartWorkingTracker.App.ViewModels
             EndTime = new TimeSpan(18, 0, 0);
             TypeIndex = 0;
             Notes = string.Empty;
+
+            OnPropertyChanged(nameof(Date));
+            OnPropertyChanged(nameof(StartTime));
+            OnPropertyChanged(nameof(EndTime));
+            OnPropertyChanged(nameof(TypeIndex));
+            OnPropertyChanged(nameof(Notes));
         }
 
         public void SetId(int? id)
@@ -88,6 +89,13 @@ namespace SmartWorkingTracker.App.ViewModels
             EndTime = _currentSession.EndDate.TimeOfDay;
             TypeIndex = (int)_currentSession.Type;
             Notes = _currentSession.Notes;
+
+
+            OnPropertyChanged(nameof(Date));
+            OnPropertyChanged(nameof(StartTime));
+            OnPropertyChanged(nameof(EndTime));
+            OnPropertyChanged(nameof(TypeIndex));
+            OnPropertyChanged(nameof(Notes));
         }
 
         public async Task<bool> Save()

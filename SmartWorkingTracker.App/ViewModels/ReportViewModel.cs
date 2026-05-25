@@ -63,9 +63,7 @@ namespace SmartWorkingTracker.App.ViewModels
 
                 if (contract == null)
                 {
-                    ContractMissing = true;
-                    OnPropertyChanged(nameof(ContractMissing));
-                    return;
+                    ContractMissing = true;                    
                 }
                 else
                 {
@@ -74,9 +72,7 @@ namespace SmartWorkingTracker.App.ViewModels
 
                     var sessions = await _service.GetSessionsByYear(SelectedYear);
 
-                    if (sessions == null || sessions.Count == 0)
-                        return;
-                    else
+                    if (sessions != null && sessions.Count > 0)                     
                     {
 
 
@@ -112,6 +108,8 @@ namespace SmartWorkingTracker.App.ViewModels
                         ForecastYearly = AvgYearly * 12;
                     }
                 }
+
+                OnPropertyChanged(nameof(ContractMissing));
                 OnPropertyChanged(nameof(JanuaryHours));
                 OnPropertyChanged(nameof(FebruaryHours));
                 OnPropertyChanged(nameof(MarchHours));

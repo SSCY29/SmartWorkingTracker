@@ -26,7 +26,7 @@ public partial class ContractPage : ContentPage
     // ✅ Aggiunta contratto (veloce MVP)
     private async void OnAddClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("editContract");
+        await Shell.Current.GoToAsync($"editContract?id={string.Empty}");
     }
     private async void OnEditClicked(object sender, EventArgs e)
     {
