@@ -1,8 +1,15 @@
 ﻿using SmartWorkingTracker.Core.Enums;
 using SmartWorkingTracker.Data.Services;
+using System.Collections.ObjectModel;
 
 namespace SmartWorkingTracker.App.ViewModels
 {
+    public class MonthlyItem
+    {
+        public string MonthName { get; set; }
+        public double Hours { get; set; }
+    }
+
     public class ReportViewModel : BaseViewModel
     {
         private readonly DatabaseService _service;
@@ -11,27 +18,22 @@ namespace SmartWorkingTracker.App.ViewModels
 
 
         public List<int> Years { get; set; } =
-            Enumerable.Range(2020, DateTime.Now.Year - 2019).ToList();
+            Enumerable.Range(2020, DateTime.Now.Year - 2019).ToList();        
 
+        public ObservableCollection<MonthlyItem> MonthlyData { get; set; } = new();
 
-        public double YearlyLimit { get; set; }
-        public double AvgYearly { get; set; }
-        public double ForecastYearly { get; set; }
+        public double YearlyLimit { get; private set; }
+        public double MonthlyLimit { get; private set; }
+        public double MonthlyWeightedLimit => YearlyLimit == 0 ? 0 : YearlyLimit / 12;
+        public double AvgYearly { get; private set; }
+        public double ForecastYearly { get; private set; }
         public string StatusYearly => ForecastYearly > YearlyLimit ? "Previsto sforamento annuale ❌" : "Annuale OK ✅";
+        public double UsagePercent { get; private set; }
+        public double TotalYearly { get; private set; }
+
+
         public bool ContractMissing { get; set; }
 
-        public double JanuaryHours { get; private set; } = 0;
-        public double FebruaryHours { get; private set; } = 0;
-        public double MarchHours { get; private set; } = 0;
-        public double AprilHours { get; private set; } = 0;
-        public double MayHours { get; private set; } = 0;
-        public double JuneHours { get; private set; } = 0;
-        public double JulyHours { get; private set; } = 0;
-        public double AugustHours { get; private set; } = 0;
-        public double SeptemberHours { get; private set; } = 0;
-        public double OctoberHours { get; private set; } = 0;
-        public double NovemberHours { get; private set; } = 0;
-        public double DecemberHours { get; private set; } = 0;
 
         public ReportViewModel(DatabaseService service)
         {
@@ -44,20 +46,14 @@ namespace SmartWorkingTracker.App.ViewModels
 
             try
             {
-                JanuaryHours = 0;
-                FebruaryHours = 0;
-                MarchHours = 0;
-                AprilHours = 0;
-                MayHours = 0;
-                JuneHours = 0;
-                JulyHours = 0;
-                AugustHours = 0;
-                SeptemberHours = 0;
-                OctoberHours = 0;
-                NovemberHours = 0;
-                DecemberHours = 0;
+                MonthlyData.Clear();
                 AvgYearly = 0;
                 ForecastYearly = 0;
+                UsagePercent = 0;
+                TotalYearly = 0;
+
+                YearlyLimit = 0;
+                MonthlyLimit = 0;
 
                 var contract = await _service.GetContractByYear(SelectedYear);
 
@@ -69,62 +65,57 @@ namespace SmartWorkingTracker.App.ViewModels
                 {
                     ContractMissing = false;
                     YearlyLimit = contract.YearlyLimitHours;
+                    MonthlyLimit = contract.MonthlyLimitHours;
 
                     var sessions = await _service.GetSessionsByYear(SelectedYear);
 
                     if (sessions != null && sessions.Count > 0)                     
                     {
-
-
-                        var smartWorkingHoursByMonth = sessions
-                            .Where(s => s.Type == SessionType.SmartWorking)
-                            .GroupBy(s => s.StartDate.Month)
+                        var smartWorkingHoursByDate = sessions
+                            .Where(s => s.Type != SessionType.Presenza)
+                            .GroupBy(s => s.StartDate)
                             .ToDictionary(x => x.Key, x => x.Sum(s => (s.EndDate - s.StartDate).TotalHours));
 
-                        JanuaryHours = smartWorkingHoursByMonth.ContainsKey(1) ? smartWorkingHoursByMonth[1] : 0;
-                        FebruaryHours = smartWorkingHoursByMonth.ContainsKey(2) ? smartWorkingHoursByMonth[2] : 0;
-                        MarchHours = smartWorkingHoursByMonth.ContainsKey(3) ? smartWorkingHoursByMonth[3] : 0;
-                        AprilHours = smartWorkingHoursByMonth.ContainsKey(4) ? smartWorkingHoursByMonth[4] : 0;
-                        MayHours = smartWorkingHoursByMonth.ContainsKey(5) ? smartWorkingHoursByMonth[5] : 0;
-                        JuneHours = smartWorkingHoursByMonth.ContainsKey(6) ? smartWorkingHoursByMonth[6] : 0;
-                        JulyHours = smartWorkingHoursByMonth.ContainsKey(7) ? smartWorkingHoursByMonth[7] : 0;
-                        AugustHours = smartWorkingHoursByMonth.ContainsKey(8) ? smartWorkingHoursByMonth[8] : 0;
-                        SeptemberHours = smartWorkingHoursByMonth.ContainsKey(9) ? smartWorkingHoursByMonth[9] : 0;
-                        OctoberHours = smartWorkingHoursByMonth.ContainsKey(10) ? smartWorkingHoursByMonth[10] : 0;
-                        NovemberHours = smartWorkingHoursByMonth.ContainsKey(11) ? smartWorkingHoursByMonth[11] : 0;
-                        DecemberHours = smartWorkingHoursByMonth.ContainsKey(12) ? smartWorkingHoursByMonth[12] : 0;
+                        MonthlyData.Clear();
+                        for (int month = 1; month <= 12; month++)
+                        {
+                            MonthlyItem item = new MonthlyItem
+                            {
+                                MonthName = new DateTime(SelectedYear, month, 1).ToString("MMMM"),
+                                Hours = 0,
+                            };
 
-                        // ✅ calcolo settimane nel mese
-                        //int weeks = GetWeeksInMonth(SelectedYear, SelectedMonth + 1);
+                            foreach (var hoursByDate in smartWorkingHoursByDate.Where(x => x.Key.Month == month))
+                            {
+                                item.Hours += hoursByDate.Value > 8 ? 8 : hoursByDate.Value;
+                            }
 
-                        //double weeklyExpected = WeeklyLimit * weeks;            
+                            MonthlyData.Add(item);
 
+                        }
 
                         // ✅ previsione annuale
                         double monthsCompleted = sessions.Max(x => x.StartDate.Month);
-                        double SmartHoursYearly = sessions.Where(s => s.Type == SessionType.SmartWorking).Sum(s => (s.EndDate - s.StartDate).TotalHours);
+                        TotalYearly = MonthlyData.Sum(s => s.Hours);
 
-                        AvgYearly = monthsCompleted > 0 ? (SmartHoursYearly / monthsCompleted) : 0;
+                        UsagePercent = YearlyLimit == 0 ? 0 : TotalYearly / YearlyLimit;
+                        AvgYearly = monthsCompleted > 0 ? (TotalYearly / monthsCompleted) : 0;
                         ForecastYearly = AvgYearly * 12;
                     }
                 }
 
+                OnPropertyChanged(nameof(UsagePercent));
+
                 OnPropertyChanged(nameof(ContractMissing));
-                OnPropertyChanged(nameof(JanuaryHours));
-                OnPropertyChanged(nameof(FebruaryHours));
-                OnPropertyChanged(nameof(MarchHours));
-                OnPropertyChanged(nameof(AprilHours));
-                OnPropertyChanged(nameof(MayHours));
-                OnPropertyChanged(nameof(JuneHours));
-                OnPropertyChanged(nameof(JulyHours));
-                OnPropertyChanged(nameof(AugustHours));
-                OnPropertyChanged(nameof(SeptemberHours));
-                OnPropertyChanged(nameof(OctoberHours));
-                OnPropertyChanged(nameof(NovemberHours));
-                OnPropertyChanged(nameof(DecemberHours));
+
                 OnPropertyChanged(nameof(ForecastYearly));
                 OnPropertyChanged(nameof(StatusYearly));
                 OnPropertyChanged(nameof(AvgYearly));
+                OnPropertyChanged(nameof(TotalYearly));                
+                
+                OnPropertyChanged(nameof(YearlyLimit));
+                OnPropertyChanged(nameof(MonthlyLimit));
+                OnPropertyChanged(nameof(MonthlyWeightedLimit));
             }
             catch (Exception)
             {
@@ -136,14 +127,5 @@ namespace SmartWorkingTracker.App.ViewModels
             }
         }
 
-        /*
-        private int GetWeeksInMonth(int year, int month)
-        {
-            var first = new DateTime(year, month, 1);
-            var last = first.AddMonths(1).AddDays(-1);
-
-            return (int)Math.Ceiling((last.Day + (int)first.DayOfWeek) / 7.0);
-        }
-        */
     }
 }

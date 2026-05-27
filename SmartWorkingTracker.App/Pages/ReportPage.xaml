@@ -15,6 +15,8 @@
 
         <VerticalStackLayout Spacing="10" Padding="10" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
 
+            <Label Text="Report Smart Working" FontSize="20" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+            
             <!-- SELEZIONE -->
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -26,13 +28,11 @@
                 <Button Text="Aggiorna" Clicked="OnReloadClicked" Grid.Column="1"/>
             </Grid>
 
-            <!-- WARNING -->
-            <Label Text="⚠ Nessun contratto"
-           TextColor="Red"
-           IsVisible="{Binding ContractMissing}" />
+            <!-- WARNING -->            
+            <Label Text="⚠ Nessun contratto" TextColor="Red" IsVisible="{Binding ContractMissing}" />
 
             <!-- DATI -->
-            <Label Text="{Binding JanuaryHours, StringFormat='Ore SW di Gen: {0:F1}h'}"/>
+            <!--<Label Text="{Binding JanuaryHours, StringFormat='Ore SW di Gen: {0:F1}h'}"/>
             <Label Text="{Binding FebruaryHours, StringFormat='Ore SW di Feb: {0:F1}h'}"/>
             <Label Text="{Binding MarchHours, StringFormat='Ore SW di Mar: {0:F1}h'}"/>
             <Label Text="{Binding AprilHours, StringFormat='Ore SW di Apr: {0:F1}h'}"/>
@@ -49,22 +49,108 @@
             <Label Text="{Binding AvgYearly, StringFormat='Media mensile: {0:F1}h'}"/>
             <Label Text="{Binding ForecastYearly, StringFormat='Previsione annuale: {0:F1}h'}"/>
 
+            -->
             <!-- STATI -->
+            <!--
             <Label Text="{Binding StatusMonthly}" FontAttributes="Bold"/>
-            <Label Text="{Binding StatusYearly}" FontAttributes="Bold"/>
+            <Label Text="{Binding StatusYearly}" FontAttributes="Bold"/>-->
+           
+            <!-- KPI CARDS -->
+            <Grid ColumnDefinitions="*,*,*">
 
+                <Border Padding="10" Grid.Column="0">
+                    <VerticalStackLayout>
+                        <Label Text="Media mensile (fino ad ora)"/>
+                        <Label Text="{Binding AvgYearly, StringFormat='{0:F1}h'}" FontSize="18" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
 
+                <Border Padding="10" Grid.Column="1">
+                    <VerticalStackLayout>
+                        <Label Text="Limite mensile da contratto"/>
+                        <Label Text="{Binding MonthlyLimit, StringFormat='{0:F1}h'}" FontSize="18" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+                
+                <Border Padding="10" Grid.Column="2">
+                    <VerticalStackLayout>
+                        <Label Text="Limite annuale pesato sui mesi"/>
+                        <Label Text="{Binding MonthlyWeightedLimit, StringFormat='{0:F1}h'}" FontSize="18" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+
+            </Grid>
+            <Grid ColumnDefinitions="*,*,*">
+
+                <Border Padding="10" Grid.Column="0">
+                    <VerticalStackLayout>
+                        <Label Text="Totale annuale (fino ad ora)"/>
+                        <Label Text="{Binding TotalYearly, StringFormat='{0:F1}h'}"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Padding="10" Grid.Column="1">
+                    <VerticalStackLayout>
+                        <Label Text="Limite annuale da contratto"/>
+                        <Label Text="{Binding YearlyLimit, StringFormat='{0:F1}h'}"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- PREVISIONE -->
+                <Border Padding="10" Grid.Column="2">
+                    <VerticalStackLayout>
+                        <Label Text="Previsione Annuale"/>
+                        <Label Text="{Binding ForecastYearly, StringFormat='{0:F1}h'}"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+
+            </Grid>
+            
+            <!-- DETTAGLIO MENSILE -->
+            <Border Padding="10">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Dettaglio" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+
+                    <CollectionView ItemsSource="{Binding MonthlyData}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding MonthName}"/>
+                                    <Label Text="{Binding Hours, StringFormat='{0:F1}h'}" Grid.Column="1"/>                                    
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- PROGRESS -->
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,*">
+                        <Label Text="Utilizzo limite annuale" FontAttributes="Bold"/>
+                        <ProgressBar Progress="{Binding UsagePercent}" Grid.Row="1" />
+                    </Grid>                   
+
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout>
+                <Label Text="Disclaimer:" />
+                <Label Text="Viene considerata una giornata lavorativa di 8h." />
+                <Label Text="Se in una giornata la somma delle ore di non presenza o smart working superano tale durata vengono considerate comunque 8h" />
+            </VerticalStackLayout>
         </VerticalStackLayout>
+
         <Grid IsVisible="{Binding IsLoading}">
             <VerticalStackLayout VerticalOptions="Center"
                              HorizontalOptions="Center"
                              Spacing="10">
 
-                <ActivityIndicator
-            IsRunning="True" />
-
+                <ActivityIndicator IsRunning="True" />
                 <Label Text="Caricamento..."  HorizontalOptions="Center" />
-
             </VerticalStackLayout>
 
         </Grid>

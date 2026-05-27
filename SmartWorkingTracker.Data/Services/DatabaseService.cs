@@ -48,7 +48,7 @@ namespace SmartWorkingTracker.Data.Services
         {
 
             var start = new DateTime(year, month, day);
-            var end = start.AddMonths(1);
+            var end = start.AddDays(1);
 
             return _database.Table<WorkSession>()
                 .Where(s => s.StartDate >= start && s.StartDate < end)
@@ -111,71 +111,7 @@ namespace SmartWorkingTracker.Data.Services
 
         public async Task PopulateDatabase()
         {
-            try
-            {
-                if ((await GetAllSessions()).Count == 0)
-                {
-                    var sessions = new List<WorkSession>();
-
-
-                    string[] righe = Constants.Csv.Split(
-                        new[] { "\r\n", "\r", "\n" },
-                        StringSplitOptions.None
-                    );
-
-                    for (int k = 1; k < righe.Length; k++)
-                    {
-                        string[] values = righe[k].Split(';');
-
-                        string[] splittedStart = values[6].Split(" ");
-                        DateTime startDate = DateTime.Parse(splittedStart[0], new CultureInfo("it-IT"));
-                        startDate = startDate.AddHours(int.Parse(splittedStart[1].Split(":")[0].Replace("0", "")));
-                        startDate = startDate.AddMinutes(int.Parse(splittedStart[1].Split(":")[1]));
-
-                        string[] splittedFinish = values[7].Split(" ");
-                        DateTime finishDate = DateTime.Parse(splittedFinish[0], new CultureInfo("it-IT"));
-                        finishDate = finishDate.AddHours(int.Parse(splittedFinish[1].Split(":")[0].Replace("0", "")));
-                        finishDate = finishDate.AddMinutes(int.Parse(splittedFinish[1].Split(":")[1]));
-
-                        sessions.Add(new WorkSession
-                        {
-                            Serial = Guid.NewGuid().ToString(),
-                            StartDate = startDate,
-                            EndDate = finishDate,
-                            Notes = $"{values[3]} - {values[4]}\n{values[8]} - {values[9]}\n{values[5]}",
-                            Type = string.IsNullOrEmpty(values[2]) ? SessionType.NonPresente : values[2] == "MTR" ? SessionType.Presenza : SessionType.SmartWorking
-                        });
-
-
-                    }
-
-
-                    foreach (var session in sessions)
-                    {
-                        await SaveSession(session);
-                    }
-                }
-
-
-                if ((await GetContracts()).Count == 0)
-                {
-                    for (int year = DateTime.Now.Year - 5; year <= DateTime.Now.Year; year++)
-                    {
-                        await SaveContract(new Contract
-                        {
-                            Year = year,
-                            WeeklyLimitHours = 24,
-                            MonthlyLimitHours = 96, // 24 hours/week * 4 weeks
-                            YearlyLimitHours = 960
-                        });
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-
-            }
+            
         }
         #endregion
     }

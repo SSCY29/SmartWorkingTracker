@@ -66,7 +66,7 @@
                                     <RoundRectangle CornerRadius="8" />
                                 </Border.StrokeShape>
 
-                                <Grid HeightRequest="50" BackgroundColor="LightGrey">
+                                <Grid HeightRequest="50" BackgroundColor="{AppThemeBinding Light={StaticResource WeekendColorLight}, Dark={StaticResource WeekendColorDark}}">
                                     <Label Text="{Binding}" HorizontalOptions="Center" VerticalOptions="Center" />
                                 </Grid>
                             </Border>
@@ -121,11 +121,11 @@
 
             </VerticalStackLayout>
             <Label Text="⚠ Nessun contratto per l'anno selezionato"
-       TextColor="Red"
-       IsVisible="{Binding ContractMissing}"
-       FontSize="15"
-       FontAttributes="Bold"
-       HorizontalTextAlignment="Center"/>
+                   TextColor="Red"
+                   IsVisible="{Binding ContractMissing}"
+                   FontSize="15"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"/>
             <!-- LEGENDA -->
 
             <Border Stroke="LightGray"
@@ -143,12 +143,12 @@
                     <Grid ColumnDefinitions="*,*">
 
                         <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="5">
-                            <BoxView Color="Green" WidthRequest="15" HeightRequest="15"/>
+                            <BoxView WidthRequest="15" HeightRequest="15" BackgroundColor="{AppThemeBinding Light={StaticResource SwColorLight}, Dark={StaticResource SwColorDark}}"/>
                             <Label Text="Smart Working"/>
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="5">
-                            <BoxView Color="Blue" WidthRequest="15" HeightRequest="15"/>
+                            <BoxView WidthRequest="15" HeightRequest="15" BackgroundColor="{AppThemeBinding Light={StaticResource PresenceColorLight}, Dark={StaticResource PresenceColorDark}}"/>
                             <Label Text="Presenza"/>
                         </HorizontalStackLayout>
                     </Grid>
@@ -156,12 +156,12 @@
                     <Grid ColumnDefinitions="*,*">
 
                         <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="5" >
-                            <BoxView Color="Red" WidthRequest="15" HeightRequest="15"/>
+                            <BoxView WidthRequest="15" HeightRequest="15" BackgroundColor="{AppThemeBinding Light={StaticResource AbsentColorLight}, Dark={StaticResource AbsentColorDark}}"/>
                             <Label Text="Assente"/>
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="5" >
-                            <BoxView Color="Purple" WidthRequest="15" HeightRequest="15"/>
+                            <BoxView WidthRequest="15" HeightRequest="15" BackgroundColor="{AppThemeBinding Light={StaticResource MixedColorLight}, Dark={StaticResource MixedColorDark}}"/>
                             <Label Text="Misto"/>
                         </HorizontalStackLayout>
                     </Grid>
@@ -169,7 +169,7 @@
                     <Grid ColumnDefinitions="*,*">
                         <!-- Riga 3 -->
                         <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Spacing="5">
-                            <BoxView Color="LightGray" WidthRequest="15" HeightRequest="15"/>
+                            <BoxView WidthRequest="15" HeightRequest="15" BackgroundColor="{AppThemeBinding Light={StaticResource WeekendColorLight}, Dark={StaticResource WeekendColorDark}}"/>
                             <Label Text="Weekend"/>
                         </HorizontalStackLayout>
 

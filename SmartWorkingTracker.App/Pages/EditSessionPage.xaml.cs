@@ -42,12 +42,7 @@ namespace SmartWorkingTracker.App.Pages
         {
             base.OnNavigatedTo(args);
 
-            if(_vm.Id.HasValue)
-            {
-                await _vm.LoadSession();
-            }
-
-
+            await _vm.LoadSession();
         }
 
         private async void OnSaveClicked(object sender, EventArgs e)

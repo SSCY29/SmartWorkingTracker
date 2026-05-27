@@ -25,13 +25,17 @@
 
             <!-- TIPO -->
             <Label Text="Tipo sessione" />
-            <Picker SelectedIndex="{Binding TypeIndex}">
+            <!--<Picker SelectedIndex="{Binding TypeIndex}">
                 <Picker.Items>
                     <x:String>Presenza</x:String>
-                    <x:String>SmartWorking</x:String>
-                    <x:String>NonPresente</x:String>
+                    <x:String>Smart Working</x:String>
+                    <x:String>Non Presente</x:String>
                 </Picker.Items>
-            </Picker>
+            </Picker>-->
+
+            <Picker ItemsSource="{Binding Types}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedTypeItem}" />
 
             <!-- NOTE -->
             <Label Text="Note" />

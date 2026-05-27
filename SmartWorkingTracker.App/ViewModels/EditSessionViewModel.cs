@@ -5,6 +5,13 @@ using SmartWorkingTracker.Data.Services;
 
 namespace SmartWorkingTracker.App.ViewModels
 {
+    public class SessionTypeItem
+    {
+        public SessionType Type { get; set; }
+        public string Name { get; set; }
+    }
+
+
     public class EditSessionViewModel : BaseViewModel
     {
         private WorkSession _currentSession;
@@ -12,13 +19,18 @@ namespace SmartWorkingTracker.App.ViewModels
 
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
-
-        public int TypeIndex { get; set; }
-
         public string Notes { get; set; }
-
-        public DateTime Date { get; private set; }
+        public DateTime? Date { get; private set; }
         public int? Id { get; private set; }
+        public SessionTypeItem SelectedTypeItem { get; set; }
+
+        public List<SessionTypeItem> Types { get; } = new()
+        {
+            new() { Type = SessionType.Presenza, Name = "Presenza" },
+            new() { Type = SessionType.SmartWorking, Name = "Smart working" },
+            new() { Type = SessionType.NonPresente, Name = "Non presente" }
+        };
+
 
         public EditSessionViewModel(DatabaseService service)
         {
@@ -27,21 +39,8 @@ namespace SmartWorkingTracker.App.ViewModels
         }
 
         public void SetDate(DateTime? date) // ✅ Inizializza i valori di default per una nuova sessione
-        {
-            if (date == null)
-                return;
-
-            Date = date.Value;
-            StartTime = new TimeSpan(9, 0, 0);
-            EndTime = new TimeSpan(18, 0, 0);
-            TypeIndex = 0;
-            Notes = string.Empty;
-
-            OnPropertyChanged(nameof(Date));
-            OnPropertyChanged(nameof(StartTime));
-            OnPropertyChanged(nameof(EndTime));
-            OnPropertyChanged(nameof(TypeIndex));
-            OnPropertyChanged(nameof(Notes));
+        {            
+            Date = date;            
         }
 
         public void SetId(int? id)
@@ -52,22 +51,32 @@ namespace SmartWorkingTracker.App.ViewModels
         public async Task LoadSession() // ✅ Carica i dati di una sessione esistente
         {
             IsLoading = true;
+
+            _currentSession = null;
             try
             {
-                if(Id != null)
+                if (Id != null)
                 {
                     var sessions = await _service.GetSessionById(Id.Value);
                     var session = sessions.FirstOrDefault();
 
-                    if (session == null)
-                        return;
-                    else
-                    {
-                        _currentSession = session;
-                        InitializeData();
-                    }
+                    _currentSession = session;
+                    
                 }
-                
+                else if(Date != null)
+                {
+                    _currentSession = new WorkSession()
+                    {
+                        StartDate = Date.Value + new TimeSpan(9,0,0),
+                        EndDate = Date.Value + new TimeSpan(18,0,0),
+                        Serial = Guid.NewGuid().ToString(),
+                        Type = SessionType.SmartWorking,
+                        Notes = string.Empty
+                    };
+                }
+
+                InitializeData();
+
             }
             catch (Exception)
             {
@@ -87,14 +96,14 @@ namespace SmartWorkingTracker.App.ViewModels
             Date = _currentSession.StartDate.Date;
             StartTime = _currentSession.StartDate.TimeOfDay;
             EndTime = _currentSession.EndDate.TimeOfDay;
-            TypeIndex = (int)_currentSession.Type;
+            SelectedTypeItem = Types.FirstOrDefault(x => x.Type == _currentSession.Type);
             Notes = _currentSession.Notes;
 
 
             OnPropertyChanged(nameof(Date));
             OnPropertyChanged(nameof(StartTime));
             OnPropertyChanged(nameof(EndTime));
-            OnPropertyChanged(nameof(TypeIndex));
+            OnPropertyChanged(nameof(SelectedTypeItem));
             OnPropertyChanged(nameof(Notes));
         }
 
@@ -104,31 +113,19 @@ namespace SmartWorkingTracker.App.ViewModels
             bool result = true;
             try
             {
-                WorkSession session;
+                _currentSession.StartDate = Date.Value + StartTime;
+                _currentSession.EndDate = Date.Value + EndTime;
+                _currentSession.Notes = Notes;
+                _currentSession.Type = SelectedTypeItem.Type;
 
-                if (_currentSession != null)
-                {
-                    // ✅ UPDATE
-                    session = _currentSession;
+                WorkSession session = _currentSession;
 
-                    session.StartDate = Date.Date + StartTime;
-                    session.EndDate = Date.Date + EndTime;
-                    session.Type = (SessionType)TypeIndex;
-                    session.Notes = Notes;
-                }
-                else
+                if (session == null)
                 {
-                    // ✅ INSERT
-                    session = new WorkSession
-                    {
-                        StartDate = Date.Date + StartTime,
-                        EndDate = Date.Date + EndTime,
-                        Type = (SessionType)TypeIndex,
-                        Notes = Notes
-                    };
+                    return false;
                 }
 
-                var existing = await _service.GetSessionsByDate(Date.Date.Year, Date.Date.Month, Date.Date.Day);
+                var existing = await _service.GetSessionsByDate(Date.Value.Year, Date.Value.Month, Date.Value.Day);
 
                 if (!WorkSessionValidator.IsValid(session, existing))
                     result = false;

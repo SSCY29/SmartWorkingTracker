@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SmartWorkingTracker.App.Pages.SessionListPage"
              xmlns:Models="clr-namespace:SmartWorkingTracker.Core.Models;assembly=SmartWorkingTracker.Core"
+             xmlns:ViewModels="clr-namespace:SmartWorkingTracker.App.ViewModels;assembly=SmartWorkingTracker.App"
              Title="Lista Sessioni"
                       xmlns:converters="clr-namespace:SmartWorkingTracker.App.Converters">
 
@@ -41,8 +42,8 @@
                             <Grid ColumnDefinitions="*,Auto">
 
                                 <VerticalStackLayout Grid.Column="0">
-                                    <Label Text="{Binding Type}" />
-                                    <Label Text="{Binding StartDate, StringFormat='{0:HH:mm}'}"/>
+                                    <Label Text="{Binding TypeString}" />
+                                    <Label Text="{Binding Range}"/>
                                 </VerticalStackLayout>
 
                                 <HorizontalStackLayout Grid.Column="1" Spacing="5">

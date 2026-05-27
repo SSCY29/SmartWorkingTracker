@@ -18,30 +18,33 @@ namespace SmartWorkingTracker.App.ViewModels
             Date.DayOfWeek == DayOfWeek.Saturday ||
             Date.DayOfWeek == DayOfWeek.Sunday;
 
-        public string Color
+        public Microsoft.Maui.Graphics.Color Color
         {
             get
             {
+                var isDark = Application.Current.RequestedTheme == AppTheme.Dark;
+
                 if (IsEmpty)
-                    return "Transparent";
+                    return Colors.Transparent;
 
                 if (IsWeekend)
-                    return "DarkGray";
+                    return (Color)Application.Current.Resources["WeekendColor" + (isDark ? "Dark" : "Light")];
 
                 if (!Sessions.Any())
-                    return "Transparent";
+                    return Colors.Transparent;
 
                 var types = Sessions.Select(s => s.Type).Distinct().ToList();
 
                 if (types.Count > 1)
-                    return "Purple";
+                    return (Color)Application.Current.Resources["MixedColor" + (isDark ? "Dark" : "Light")];
 
                 return types.First() switch
                 {
-                    SessionType.Presenza => "Blue",
-                    SessionType.SmartWorking => "Green",
-                    SessionType.NonPresente => "Red",
-                    _ => "White"
+                    SessionType.Presenza => (Color)Application.Current.Resources["PresenceColor" + (isDark ? "Dark" : "Light")],
+                    SessionType.SmartWorking => (Color)Application.Current.Resources["SwColor" + (isDark ? "Dark" : "Light")],
+                    SessionType.NonPresente => (Color)Application.Current.Resources["AbsentColor" + (isDark ? "Dark" : "Light")],
+                    _ => Colors.Transparent
+
                 };
             }
         }

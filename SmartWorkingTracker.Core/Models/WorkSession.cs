@@ -18,6 +18,11 @@ namespace SmartWorkingTracker.Core.Models
         public string? Notes { get; set; }
 
         public SessionType Type { get; set; }
+        [Ignore]
+        public string TypeString => Type == SessionType.Presenza ? "Presenza" : Type == SessionType.SmartWorking ? "Smart working" : "Non presente";
+
+        [Ignore]
+        public string Range => $"{StartDate.ToString("HH:mm")} - {EndDate.ToString("HH:mm")}";
     }
 
 }

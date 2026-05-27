@@ -1,10 +1,10 @@
-﻿using SmartWorkingTracker.Core.Models;
+﻿using SmartWorkingTracker.Core.Enums;
+using SmartWorkingTracker.Core.Models;
 using SmartWorkingTracker.Data.Services;
 using System.Collections.ObjectModel;
 
 namespace SmartWorkingTracker.App.ViewModels
 {
-
     public class SessionListViewModel : BaseViewModel
     {
         private readonly DatabaseService _service;
@@ -38,9 +38,9 @@ namespace SmartWorkingTracker.App.ViewModels
                 Date = date;
                 Sessions.Clear();
 
-                var sessions = await _service.GetSessionsByMonth(Date.Year, Date.Month);
+                var sessions = await _service.GetSessionsByDate(Date.Year, Date.Month, Date.Day);
 
-                sessions = sessions?.Where(s => s.StartDate.Date == Date)?.ToList() ?? new List<WorkSession>();
+                sessions = sessions ?? new List<WorkSession>();
 
                 foreach (var s in sessions.OrderBy(x => x.StartDate.Hour).ThenBy(x => x.StartDate.Minute))
                     Sessions.Add(s);

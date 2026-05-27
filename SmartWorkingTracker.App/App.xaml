@@ -9,6 +9,26 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- SMART WORKING -->
+            <Color x:Key="SwColorLight">#34C759</Color>
+            <Color x:Key="SwColorDark">#30D158</Color>
+
+            <!-- PRESENZA -->
+            <Color x:Key="PresenceColorLight">#007AFF</Color>
+            <Color x:Key="PresenceColorDark">#0A84FF</Color>
+
+            <!-- ASSENTE -->
+            <Color x:Key="AbsentColorLight">#FF3B30</Color>
+            <Color x:Key="AbsentColorDark">#FF453A</Color>
+
+            <!-- MISTO -->
+            <Color x:Key="MixedColorLight">#AF52DE</Color>
+            <Color x:Key="MixedColorDark">#BF5AF2</Color>
+
+            <!-- WEEKEND -->
+            <Color x:Key="WeekendColorLight">#E5E5EA</Color>
+            <Color x:Key="WeekendColorDark">#3A3A3C</Color>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
